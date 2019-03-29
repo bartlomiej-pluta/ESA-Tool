@@ -1,0 +1,4 @@
+ext {
+  daggerVersion = '2.21'
+  lombokVersion = '1.18.6'
+}
