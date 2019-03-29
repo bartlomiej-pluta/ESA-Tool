@@ -1,7 +1,6 @@
 plugins {
     id 'java'
     id 'idea'
-    id "net.ltgt.apt" version "0.10"
 }
 
 group 'com.bartek'
@@ -16,7 +15,7 @@ repositories {
 apply from: 'dependency-versions.gradle'
 dependencies {
     compile "com.google.dagger:dagger:${daggerVersion}"
-    apt "com.google.dagger:dagger-compiler:${daggerVersion}"
+    annotationProcessor "com.google.dagger:dagger-compiler:${daggerVersion}"
     compileOnly "org.projectlombok:lombok:${lombokVersion}"
     annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
 
