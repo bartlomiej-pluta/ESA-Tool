@@ -1,4 +1,6 @@
 ext {
   daggerVersion = '2.21'
   lombokVersion = '1.18.6'
+  commonCliVersion = '1.4'
+  vavrVersion = '1.0.0-alpha-2'
 }
