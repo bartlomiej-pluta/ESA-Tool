@@ -1,10 +1,10 @@
 package com.bartek.esa;
 
 import com.bartek.esa.cli.model.CliArgsOptions;
-import com.bartek.esa.dispatcher.dispatcher.MethodDispatcher;
-import com.bartek.esa.dispatcher.model.DispatcherActions;
 import com.bartek.esa.cli.parser.CliArgsParser;
 import com.bartek.esa.di.DaggerDependencyInjector;
+import com.bartek.esa.dispatcher.dispatcher.MethodDispatcher;
+import com.bartek.esa.dispatcher.model.DispatcherActions;
 
 import javax.inject.Inject;
 
