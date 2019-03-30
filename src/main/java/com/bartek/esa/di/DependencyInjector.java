@@ -3,11 +3,13 @@ package com.bartek.esa.di;
 import com.bartek.esa.EsaMain;
 import com.bartek.esa.cli.di.CliModule;
 import com.bartek.esa.dispatcher.di.DispatcherModule;
+import com.bartek.esa.file.di.FileModule;
 import dagger.Component;
 
 @Component(modules = {
         CliModule.class,
-        DispatcherModule.class
+        DispatcherModule.class,
+        FileModule.class
 })
 public interface DependencyInjector {
     EsaMain esa();
