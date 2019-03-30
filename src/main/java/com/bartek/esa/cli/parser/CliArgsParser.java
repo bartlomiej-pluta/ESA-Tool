@@ -4,43 +4,50 @@ import com.bartek.esa.cli.model.CliArgsOptions;
 import org.apache.commons.cli.*;
 
 import javax.inject.Inject;
+import java.util.HashSet;
 
 import static java.util.Arrays.asList;
-import static java.util.Collections.emptyList;
+import static java.util.Collections.emptySet;
 
 public class CliArgsParser {
     private static final String SRC_OPT = "src";
     private static final String APK_OPT = "apk";
     private static final String EXCLUDE_OPT = "exclude";
     private static final String HELP_OPT = "help";
+    private static final String PLUGINS_OPT = "plugins";
 
     @Inject
     public CliArgsParser() {}
 
     public CliArgsOptions parse(String[] args) {
         try {
-            CommandLine command = new DefaultParser().parse(prepareOptions(), args);
-
-            if (command.hasOption(HELP_OPT)) {
-                printHelp();
-                return CliArgsOptions.empty();
-            }
-
-            boolean isNeitherAuditNorAnalysis = !command.hasOption(SRC_OPT) && !command.hasOption(APK_OPT);
-            if (isNeitherAuditNorAnalysis) {
-                printHelp();
-                return CliArgsOptions.empty();
-            }
-
-            return CliArgsOptions.builder()
-                    .sourceAnalysisDirectory(command.hasOption(SRC_OPT) ? command.getOptionValue(SRC_OPT) : null)
-                    .apkAuditFile(command.hasOption(APK_OPT) ? command.getOptionValue(APK_OPT) : null)
-                    .excludes(command.hasOption(EXCLUDE_OPT) ? asList(command.getOptionValues(EXCLUDE_OPT)) : emptyList())
-                    .build();
+            return tryToParse(args);
         } catch (ParseException e) {
             printHelp();
             return CliArgsOptions.empty();
         }
+    }
+
+    private CliArgsOptions tryToParse(String[] args) throws ParseException {
+        CommandLine command = new DefaultParser().parse(prepareOptions(), args);
+
+        if (command.hasOption(HELP_OPT)) {
+            printHelp();
+            return CliArgsOptions.empty();
+        }
+
+        boolean isNeitherAuditNorAnalysis = !command.hasOption(SRC_OPT) && !command.hasOption(APK_OPT);
+        if (isNeitherAuditNorAnalysis) {
+            printHelp();
+            return CliArgsOptions.empty();
+        }
+
+        return CliArgsOptions.builder()
+                .sourceAnalysisDirectory(command.hasOption(SRC_OPT) ? command.getOptionValue(SRC_OPT) : null)
+                .apkAuditFile(command.hasOption(APK_OPT) ? command.getOptionValue(APK_OPT) : null)
+                .plugins(command.hasOption(PLUGINS_OPT) ? new HashSet<>(asList(command.getOptionValues(PLUGINS_OPT))) : emptySet())
+                .excludes(command.hasOption(EXCLUDE_OPT) ? new HashSet<>(asList(command.getOptionValues(EXCLUDE_OPT))) : emptySet())
+                .build();
     }
 
     private void printHelp() {
@@ -53,6 +60,7 @@ public class CliArgsParser {
         options.addOption(source());
         options.addOption(apk());
         options.addOption(exclude());
+        options.addOption(plugins());
         options.addOption(help());
         return options;
     }
@@ -87,8 +95,16 @@ public class CliArgsParser {
     private Option help() {
         return Option.builder()
                 .longOpt(HELP_OPT)
-                .argName("h")
                 .desc("print this help")
+                .build();
+    }
+
+    private Option plugins() {
+        return Option.builder()
+                .longOpt(PLUGINS_OPT)
+                .argName("CODES")
+                .numberOfArgs(Option.UNLIMITED_VALUES)
+                .desc("use only selected security checks for audit/analysis")
                 .build();
     }
 }

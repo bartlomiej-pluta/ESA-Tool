@@ -3,15 +3,17 @@ package com.bartek.esa.cli.model;
 import lombok.Builder;
 import lombok.Data;
 
-import java.util.Collections;
-import java.util.List;
+import java.util.Set;
+
+import static java.util.Collections.emptySet;
 
 @Data
 @Builder
 public class CliArgsOptions {
     private String sourceAnalysisDirectory;
     private String apkAuditFile;
-    private List<String> excludes;
+    private Set<String> excludes;
+    private Set<String> plugins;
 
     public boolean isSourceAnalysis() {
         return sourceAnalysisDirectory != null;
@@ -25,7 +27,8 @@ public class CliArgsOptions {
         return CliArgsOptions.builder()
                 .sourceAnalysisDirectory(null)
                 .apkAuditFile(null)
-                .excludes(Collections.emptyList())
+                .excludes(emptySet())
+                .plugins(emptySet())
                 .build();
     }
 }
