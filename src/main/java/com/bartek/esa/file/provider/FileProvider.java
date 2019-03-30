@@ -18,6 +18,12 @@ public class FileProvider {
 
     }
 
+    public File createTemporaryDirectory() {
+        return Try.of(() -> Files.createTempDirectory(null))
+                .getOrElseThrow(EsaException::new)
+                .toFile();
+    }
+
     public String readFile(File file) {
         StringBuilder content = new StringBuilder();
         Try.run(() -> Files.lines(file.toPath())

@@ -1,6 +1,7 @@
 package com.bartek.esa.decompiler.di;
 
 import com.bartek.esa.decompiler.decompiler.Decompiler;
+import com.bartek.esa.file.provider.FileProvider;
 import dagger.Module;
 import dagger.Provides;
 
@@ -8,7 +9,7 @@ import dagger.Provides;
 public class DecompilerModule {
 
     @Provides
-    public Decompiler decompiler() {
-        return new Decompiler();
+    public Decompiler decompiler(FileProvider fileProvider) {
+        return new Decompiler(fileProvider);
     }
 }
