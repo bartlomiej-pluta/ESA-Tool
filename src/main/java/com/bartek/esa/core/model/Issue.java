@@ -1,0 +1,15 @@
+package com.bartek.esa.core.model;
+
+import lombok.Builder;
+import lombok.Data;
+
+import java.io.File;
+
+@Data
+@Builder
+public class Issue {
+    private final Class<?> issuer;
+    private final File file;
+    private final int lineNumber;
+    private final String line;
+}
