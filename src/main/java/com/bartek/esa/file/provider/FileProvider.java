@@ -24,15 +24,6 @@ public class FileProvider {
                 .toFile();
     }
 
-    public String readFile(File file) {
-        StringBuilder content = new StringBuilder();
-        Try.run(() -> Files.lines(file.toPath())
-                .map(line -> line + "\n")
-                .forEach(content::append));
-
-        return content.toString();
-    }
-
     public Set<File> findFilesRecursively(String path, String globPattern) {
         return findFilesRecursivelyInSubpath(path, "", globPattern);
     }
