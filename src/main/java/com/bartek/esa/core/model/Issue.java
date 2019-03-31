@@ -10,6 +10,6 @@ import java.io.File;
 public class Issue {
     private final Class<?> issuer;
     private final File file;
-    private final int lineNumber;
+    private final Integer lineNumber;
     private final String line;
 }

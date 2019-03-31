@@ -12,6 +12,7 @@ public abstract class BasePlugin {
 
     public void update(File file) {
         this.file = file;
+        this.issues.clear();
     }
 
     public List<Issue> runForIssues() {
@@ -21,7 +22,7 @@ public abstract class BasePlugin {
 
     protected abstract void run(File file);
 
-    protected void addIssue(int lineNumber, String line) {
+    protected void addIssue(Integer lineNumber, String line) {
         Issue issue = Issue.builder()
                 .issuer(this.getClass())
                 .file(file)
@@ -30,5 +31,9 @@ public abstract class BasePlugin {
                 .build();
 
         issues.add(issue);
+    }
+
+    protected File getOriginalFile() {
+        return file;
     }
 }

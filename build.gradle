@@ -20,6 +20,7 @@ dependencies {
     annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
     compile "commons-cli:commons-cli:${commonCliVersion}"
     compile "io.vavr:vavr:${vavrVersion}"
+    compile "com.github.javaparser:javaparser-core:${javaParserVersion}"
 }
 
 jar {
