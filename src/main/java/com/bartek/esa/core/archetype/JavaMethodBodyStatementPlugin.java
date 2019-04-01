@@ -1,5 +1,6 @@
 package com.bartek.esa.core.archetype;
 
+import com.bartek.esa.file.matcher.GlobMatcher;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.BodyDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
@@ -12,6 +13,10 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 public abstract class JavaMethodBodyStatementPlugin extends JavaPlugin {
+
+    public JavaMethodBodyStatementPlugin(GlobMatcher globMatcher) {
+        super(globMatcher);
+    }
 
     @Override
     public void run(CompilationUnit compilationUnit) {

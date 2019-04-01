@@ -1,6 +1,6 @@
 package com.bartek.esa.core.executor;
 
-import com.bartek.esa.core.archetype.BasePlugin;
+import com.bartek.esa.core.archetype.Plugin;
 import com.bartek.esa.core.model.Issue;
 
 import javax.inject.Inject;
@@ -16,15 +16,16 @@ public class PluginExecutor {
 
     }
 
-    public List<Issue> executeForFiles(List<File> files, List<BasePlugin> plugins) {
+    public List<Issue> executeForFiles(List<File> files, List<Plugin> plugins) {
         return files.stream()
                 .map(file -> executeForFile(file, plugins))
                 .flatMap(List::stream)
                 .collect(toList());
     }
 
-    private List<Issue> executeForFile(File file, List<BasePlugin> plugins) {
+    private List<Issue> executeForFile(File file, List<Plugin> plugins) {
         return plugins.stream()
+                .filter(plugin -> plugin.supports(file))
                 .map(plugin -> {
                     plugin.update(file);
                     return plugin.runForIssues();

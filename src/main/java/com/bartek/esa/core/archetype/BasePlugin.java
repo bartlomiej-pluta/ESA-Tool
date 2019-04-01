@@ -6,15 +6,17 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class BasePlugin {
+public abstract class BasePlugin implements Plugin {
     private List<Issue> issues = new ArrayList<>();
     private File file;
 
+    @Override
     public void update(File file) {
         this.file = file;
         this.issues.clear();
     }
 
+    @Override
     public List<Issue> runForIssues() {
         run(file);
         return issues;

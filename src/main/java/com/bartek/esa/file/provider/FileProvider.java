@@ -1,6 +1,7 @@
 package com.bartek.esa.file.provider;
 
 import com.bartek.esa.error.EsaException;
+import com.bartek.esa.file.matcher.GlobMatcher;
 import io.vavr.control.Try;
 
 import javax.inject.Inject;
@@ -12,10 +13,12 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public class FileProvider {
+    private final GlobMatcher globMatcher;
 
     @Inject
-    public FileProvider() {
+    public FileProvider(GlobMatcher globMatcher) {
 
+        this.globMatcher = globMatcher;
     }
 
     public File createTemporaryDirectory() {
@@ -24,49 +27,11 @@ public class FileProvider {
                 .toFile();
     }
 
-    public Set<File> findFilesRecursively(String path, String globPattern) {
-        return findFilesRecursivelyInSubpath(path, "", globPattern);
-    }
-
-    public Set<File> findFilesRecursivelyInSubpath(String path, String subpath, String globPattern) {
+    public Set<File> getGlobMatchedFiles(String path, String globPattern) {
         return Try.of(() -> Files.walk(Paths.get(path))
-                .filter(p -> p.toString().contains(subpath))
-                .filter(p -> matchesGlobPattern(p.getFileName().toString(), globPattern))
+                .filter(p -> globMatcher.pathMatchesGlobPattern(p, globPattern))
                 .map(Path::toFile)
                 .collect(Collectors.toSet()))
                 .getOrElseThrow(EsaException::new);
-    }
-
-    public boolean matchesGlobPattern(String filename, String globPattern) {
-        return filename.matches(createRegexFromGlob(globPattern));
-    }
-
-    private String createRegexFromGlob(String glob) {
-        StringBuilder out = new StringBuilder("^");
-
-        glob
-                .chars()
-                .mapToObj(i -> (char) i)
-                .map(this::globCharacterToRegexString)
-                .forEach(out::append);
-
-        out.append('$');
-
-        return out.toString();
-    }
-
-    private String globCharacterToRegexString(char character) {
-        switch (character) {
-            case '*':
-                return ".*";
-            case '?':
-                return ".";
-            case '.':
-                return "\\.";
-            case '\\':
-                return "\\\\";
-            default:
-                return String.valueOf(character);
-        }
     }
 }

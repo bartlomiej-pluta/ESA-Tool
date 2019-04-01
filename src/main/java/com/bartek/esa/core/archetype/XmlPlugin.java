@@ -1,6 +1,7 @@
 package com.bartek.esa.core.archetype;
 
 import com.bartek.esa.error.EsaException;
+import com.bartek.esa.file.matcher.GlobMatcher;
 import io.vavr.control.Try;
 import org.w3c.dom.Document;
 
@@ -11,6 +12,16 @@ import javax.xml.xpath.XPathFactory;
 import java.io.File;
 
 public abstract class XmlPlugin extends BasePlugin {
+    private final GlobMatcher globMatcher;
+
+    protected XmlPlugin(GlobMatcher globMatcher) {
+        this.globMatcher = globMatcher;
+    }
+
+    @Override
+    public boolean supports(File file) {
+        return globMatcher.fileMatchesGlobPattern(file, "**/*.xml");
+    }
 
     @Override
     protected void run(File file) {
