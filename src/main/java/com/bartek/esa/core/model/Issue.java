@@ -9,6 +9,7 @@ import java.io.File;
 @Builder
 public class Issue {
     private final Class<?> issuer;
+    private final String descriptionCode;
     private final File file;
     private final Integer lineNumber;
     private final String line;
