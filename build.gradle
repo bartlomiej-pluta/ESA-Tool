@@ -21,6 +21,7 @@ dependencies {
     compile "commons-cli:commons-cli:${commonCliVersion}"
     compile "io.vavr:vavr:${vavrVersion}"
     compile "com.github.javaparser:javaparser-core:${javaParserVersion}"
+    compile "commons-io:commons-io:${commonsIoVersion}"
 }
 
 jar {
