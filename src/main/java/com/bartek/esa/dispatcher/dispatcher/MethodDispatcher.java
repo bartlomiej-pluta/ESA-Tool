@@ -1,9 +1,12 @@
 package com.bartek.esa.dispatcher.dispatcher;
 
 import com.bartek.esa.cli.model.CliArgsOptions;
+import com.bartek.esa.core.model.object.Issue;
 import com.bartek.esa.dispatcher.model.DispatcherActions;
 
 import javax.inject.Inject;
+import java.util.Collections;
+import java.util.List;
 
 public class MethodDispatcher {
 
@@ -12,14 +15,22 @@ public class MethodDispatcher {
 
     }
 
-    public void dispatchMethod(CliArgsOptions options, DispatcherActions actions) {
+    public List<Issue> dispatchMethod(CliArgsOptions options, DispatcherActions actions) {
         if(options.isSourceAnalysis()) {
-            actions.getSourceAnalysis().accept(options.getSourceAnalysisDirectory());
-            return;
+            return actions.getSourceAnalysis().perform(
+                    options.getSourceAnalysisDirectory(),
+                    options.getPlugins(),
+                    options.getExcludes()
+            );
         }
 
         if(options.isApkAudit()) {
-            actions.getApkAudit().accept(options.getApkAuditFile());
+            return actions.getApkAudit().perform(options.getApkAuditFile(),
+                    options.getPlugins(),
+                    options.getExcludes()
+            );
         }
+
+        return Collections.emptyList();
     }
 }
