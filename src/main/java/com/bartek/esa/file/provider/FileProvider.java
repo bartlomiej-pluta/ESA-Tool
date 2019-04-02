@@ -27,7 +27,7 @@ public class FileProvider {
                 .toFile();
     }
 
-    public Set<File> getGlobMatchedFiles(String path, String globPattern) {
+    public Set<File> getGlobMatchedFilesRecursively(String path, String globPattern) {
         return Try.of(() -> Files.walk(Paths.get(path))
                 .filter(p -> globMatcher.pathMatchesGlobPattern(p, globPattern))
                 .map(Path::toFile)
