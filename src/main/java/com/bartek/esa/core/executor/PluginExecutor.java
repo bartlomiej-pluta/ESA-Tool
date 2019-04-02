@@ -30,11 +30,9 @@ public class PluginExecutor {
     private List<Issue> executeForFile(File manifest, File file, Set<Plugin> plugins) {
         Document xmlManifest = xmlHelper.parseXml(manifest);
         return plugins.stream()
+                .peek(plugin -> plugin.update(file, xmlManifest))
                 .filter(plugin -> plugin.supports(file))
-                .map(plugin -> {
-                    plugin.update(file, xmlManifest);
-                    return plugin.runForIssues();
-                })
+                .map(Plugin::runForIssues)
                 .flatMap(List::stream)
                 .collect(toList());
     }
