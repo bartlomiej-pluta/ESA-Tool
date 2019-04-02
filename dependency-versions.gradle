@@ -4,4 +4,5 @@ ext {
   commonCliVersion = '1.4'
   vavrVersion = '1.0.0-alpha-2'
   javaParserVersion = '3.13.4'
+  commonsIoVersion = '2.6'
 }
