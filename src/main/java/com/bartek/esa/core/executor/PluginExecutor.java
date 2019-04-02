@@ -1,7 +1,7 @@
 package com.bartek.esa.core.executor;
 
 import com.bartek.esa.core.archetype.Plugin;
-import com.bartek.esa.core.model.Issue;
+import com.bartek.esa.core.model.object.Issue;
 
 import javax.inject.Inject;
 import java.io.File;

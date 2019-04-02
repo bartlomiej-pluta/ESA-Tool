@@ -11,7 +11,7 @@ import java.io.File;
 public abstract class JavaPlugin extends BasePlugin {
     private final GlobMatcher globMatcher;
 
-    protected JavaPlugin(GlobMatcher globMatcher) {
+    public JavaPlugin(GlobMatcher globMatcher) {
         this.globMatcher = globMatcher;
     }
 

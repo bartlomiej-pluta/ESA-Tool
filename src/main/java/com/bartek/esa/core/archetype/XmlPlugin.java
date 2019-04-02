@@ -14,7 +14,7 @@ import java.io.File;
 public abstract class XmlPlugin extends BasePlugin {
     private final GlobMatcher globMatcher;
 
-    protected XmlPlugin(GlobMatcher globMatcher) {
+    public XmlPlugin(GlobMatcher globMatcher) {
         this.globMatcher = globMatcher;
     }
 

@@ -1,6 +1,7 @@
 package com.bartek.esa.core.archetype;
 
-import com.bartek.esa.core.model.Issue;
+import com.bartek.esa.core.model.enumeration.Severity;
+import com.bartek.esa.core.model.object.Issue;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -24,12 +25,13 @@ public abstract class BasePlugin implements Plugin {
 
     protected abstract void run(File file);
 
-    protected void addIssue(Integer lineNumber, String line) {
-        addIssue("", lineNumber, line);
+    protected void addIssue(Severity severity, Integer lineNumber, String line) {
+        addIssue(severity, "", lineNumber, line);
     }
 
-    protected void addIssue(String descriptionCode, Integer lineNumber, String line) {
+    protected void addIssue(Severity severity, String descriptionCode, Integer lineNumber, String line) {
         Issue issue = Issue.builder()
+                .severity(severity)
                 .issuer(this.getClass())
                 .descriptionCode(descriptionCode)
                 .file(file)

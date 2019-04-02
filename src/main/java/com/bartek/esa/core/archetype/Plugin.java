@@ -1,6 +1,6 @@
 package com.bartek.esa.core.archetype;
 
-import com.bartek.esa.core.model.Issue;
+import com.bartek.esa.core.model.object.Issue;
 
 import java.io.File;
 import java.util.List;

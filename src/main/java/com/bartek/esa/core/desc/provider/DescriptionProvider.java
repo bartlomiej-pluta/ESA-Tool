@@ -1,6 +1,6 @@
 package com.bartek.esa.core.desc.provider;
 
-import com.bartek.esa.core.model.Issue;
+import com.bartek.esa.core.model.object.Issue;
 import com.bartek.esa.error.EsaException;
 import io.vavr.control.Try;
 
