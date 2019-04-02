@@ -3,6 +3,7 @@ package com.bartek.esa.core.di;
 import com.bartek.esa.core.desc.provider.DescriptionProvider;
 import com.bartek.esa.core.executor.PluginExecutor;
 import com.bartek.esa.core.java.JavaSyntaxRegexProvider;
+import com.bartek.esa.core.xml.XmlHelper;
 import dagger.Module;
 import dagger.Provides;
 
@@ -10,8 +11,8 @@ import dagger.Provides;
 public class CoreModule {
 
     @Provides
-    public PluginExecutor pluginExecutor() {
-        return new PluginExecutor();
+    public PluginExecutor pluginExecutor(XmlHelper xmlHelper) {
+        return new PluginExecutor(xmlHelper);
     }
 
     @Provides
@@ -22,5 +23,10 @@ public class CoreModule {
     @Provides
     public DescriptionProvider descriptionProvider() {
         return new DescriptionProvider();
+    }
+
+    @Provides
+    public XmlHelper xmlHelper() {
+        return new XmlHelper();
     }
 }
