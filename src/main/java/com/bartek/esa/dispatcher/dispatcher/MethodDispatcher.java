@@ -25,7 +25,8 @@ public class MethodDispatcher {
         }
 
         if(options.isApkAudit()) {
-            return actions.getApkAudit().perform(options.getApkAuditFile(),
+            return actions.getApkAudit().perform(
+                    options.getApkAuditFile(),
                     options.getPlugins(),
                     options.getExcludes()
             );
