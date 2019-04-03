@@ -8,6 +8,7 @@ import org.w3c.dom.Document;
 import javax.inject.Inject;
 import java.io.File;
 import java.util.List;
+import java.util.Set;
 
 import static java.util.stream.Collectors.toList;
 
@@ -19,21 +20,19 @@ public class PluginExecutor {
         this.xmlHelper = xmlHelper;
     }
 
-    public List<Issue> executeForFiles(File manifest, List<File> files, List<Plugin> plugins) {
+    public List<Issue> executeForFiles(File manifest, Set<File> files, Set<Plugin> plugins) {
         return files.stream()
                 .map(file -> executeForFile(manifest, file, plugins))
                 .flatMap(List::stream)
                 .collect(toList());
     }
 
-    private List<Issue> executeForFile(File manifest, File file, List<Plugin> plugins) {
+    private List<Issue> executeForFile(File manifest, File file, Set<Plugin> plugins) {
         Document xmlManifest = xmlHelper.parseXml(manifest);
         return plugins.stream()
+                .peek(plugin -> plugin.update(file, xmlManifest))
                 .filter(plugin -> plugin.supports(file))
-                .map(plugin -> {
-                    plugin.update(file, xmlManifest);
-                    return plugin.runForIssues();
-                })
+                .map(Plugin::runForIssues)
                 .flatMap(List::stream)
                 .collect(toList());
     }
