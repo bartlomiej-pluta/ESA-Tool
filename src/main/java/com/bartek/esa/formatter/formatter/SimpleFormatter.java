@@ -19,6 +19,11 @@ public class SimpleFormatter implements Formatter {
 
     @Override
     public void format(List<Issue> issues) {
+        if(issues.isEmpty()) {
+            System.out.println("No issues found.");
+            return;
+        }
+
         String format = issues.stream()
                 .map(this::format)
                 .collect(Collectors.joining());

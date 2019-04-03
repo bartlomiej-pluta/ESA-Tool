@@ -26,6 +26,12 @@ public class ColorFormatter implements Formatter {
     @Override
     public void format(List<Issue> issues) {
         AnsiConsole.systemInstall();
+        if(issues.isEmpty()) {
+            Ansi noIssuesFound = ansi().fg(GREEN).a("No issues found.").reset();
+            System.out.println(noIssuesFound);
+            return;
+        }
+
         String format = issues.stream()
                 .map(this::format)
                 .collect(Collectors.joining());
