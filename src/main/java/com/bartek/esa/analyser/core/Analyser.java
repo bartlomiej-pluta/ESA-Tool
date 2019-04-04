@@ -31,7 +31,9 @@ public abstract class Analyser {
         Set<File> files = getFiles(newSource);
         Set<Plugin> selectedPlugins = getPlugins(pluginCodes, excludeCodes);
 
-        return pluginExecutor.executeForFiles(manifest, files, selectedPlugins);
+        List<Issue> issues = pluginExecutor.executeForFiles(manifest, files, selectedPlugins);
+        performCleaning(newSource);
+        return issues;
     }
 
     protected abstract String prepareSources(String source);
@@ -41,6 +43,8 @@ public abstract class Analyser {
     protected abstract String getJavaGlob();
 
     protected abstract String getLayoutGlob();
+
+    protected abstract void performCleaning(String source);
 
 
     private File getManifest(String source) {

@@ -3,8 +3,10 @@ package com.bartek.esa.analyser.source;
 import com.bartek.esa.analyser.core.Analyser;
 import com.bartek.esa.core.archetype.Plugin;
 import com.bartek.esa.core.executor.PluginExecutor;
+import com.bartek.esa.error.EsaException;
 import com.bartek.esa.file.provider.FileProvider;
 
+import java.io.File;
 import java.util.Set;
 
 public class SourceAnalyser extends Analyser {
@@ -18,7 +20,14 @@ public class SourceAnalyser extends Analyser {
 
     @Override
     protected String prepareSources(String source) {
+        checkIfSourceIsDirectory(source);
         return source;
+    }
+
+    private void checkIfSourceIsDirectory(String source) {
+        if (!new File(source).isDirectory()) {
+            throw new EsaException("Provided source is not a directory. Interrupting...");
+        }
     }
 
     @Override
@@ -34,5 +43,10 @@ public class SourceAnalyser extends Analyser {
     @Override
     protected String getLayoutGlob() {
         return LAYOUT_GLOB;
+    }
+
+    @Override
+    protected void performCleaning(String source) {
+        // do nothing
     }
 }
