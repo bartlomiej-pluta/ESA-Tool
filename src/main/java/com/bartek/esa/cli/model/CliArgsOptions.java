@@ -14,6 +14,7 @@ public class CliArgsOptions {
     private String apkAuditFile;
     private Set<String> excludes;
     private Set<String> plugins;
+    private boolean color;
 
     public boolean isSourceAnalysis() {
         return sourceAnalysisDirectory != null;

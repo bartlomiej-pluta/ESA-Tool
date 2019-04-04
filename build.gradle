@@ -6,7 +6,7 @@ plugins {
 group 'com.bartek'
 version '1.0-SNAPSHOT'
 
-sourceCompatibility = 1.8
+sourceCompatibility = 1.12
 
 repositories {
     mavenCentral()
@@ -22,6 +22,8 @@ dependencies {
     compile "io.vavr:vavr:${vavrVersion}"
     compile "com.github.javaparser:javaparser-core:${javaParserVersion}"
     compile "commons-io:commons-io:${commonsIoVersion}"
+    compile "org.fusesource.jansi:jansi:${jansiVersion}"
+
 }
 
 jar {

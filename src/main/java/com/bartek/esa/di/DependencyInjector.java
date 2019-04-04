@@ -8,6 +8,7 @@ import com.bartek.esa.core.di.PluginModule;
 import com.bartek.esa.decompiler.di.DecompilerModule;
 import com.bartek.esa.dispatcher.di.DispatcherModule;
 import com.bartek.esa.file.di.FileModule;
+import com.bartek.esa.formatter.di.FormatterModule;
 import dagger.Component;
 
 @Component(modules = {
@@ -17,7 +18,8 @@ import dagger.Component;
         DecompilerModule.class,
         CoreModule.class,
         PluginModule.class,
-        AnalyserModule.class
+        AnalyserModule.class,
+        FormatterModule.class
 })
 public interface DependencyInjector {
     EsaMain esa();

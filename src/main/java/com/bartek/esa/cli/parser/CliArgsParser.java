@@ -15,6 +15,7 @@ public class CliArgsParser {
     private static final String EXCLUDE_OPT = "exclude";
     private static final String HELP_OPT = "help";
     private static final String PLUGINS_OPT = "plugins";
+    private static final String COLOR_OPT = "color";
 
     @Inject
     public CliArgsParser() {}
@@ -47,6 +48,7 @@ public class CliArgsParser {
                 .apkAuditFile(command.hasOption(APK_OPT) ? command.getOptionValue(APK_OPT) : null)
                 .plugins(command.hasOption(PLUGINS_OPT) ? new HashSet<>(asList(command.getOptionValues(PLUGINS_OPT))) : emptySet())
                 .excludes(command.hasOption(EXCLUDE_OPT) ? new HashSet<>(asList(command.getOptionValues(EXCLUDE_OPT))) : emptySet())
+                .color(command.hasOption(COLOR_OPT))
                 .build();
     }
 
@@ -62,6 +64,7 @@ public class CliArgsParser {
         options.addOption(exclude());
         options.addOption(plugins());
         options.addOption(help());
+        options.addOption(color());
         return options;
     }
 
@@ -105,6 +108,13 @@ public class CliArgsParser {
                 .argName("CODES")
                 .numberOfArgs(Option.UNLIMITED_VALUES)
                 .desc("use only selected security checks for audit/analysis")
+                .build();
+    }
+
+    private Option color() {
+        return Option.builder()
+                .longOpt(COLOR_OPT)
+                .desc("enable colored output")
                 .build();
     }
 }

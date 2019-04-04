@@ -5,4 +5,5 @@ ext {
   vavrVersion = '1.0.0-alpha-2'
   javaParserVersion = '3.13.4'
   commonsIoVersion = '2.6'
+  jansiVersion = '1.17.1'
 }
