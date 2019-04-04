@@ -5,11 +5,11 @@ import com.bartek.esa.core.model.object.Issue;
 import org.w3c.dom.Document;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 public abstract class BasePlugin implements Plugin {
-    private List<Issue> issues = new ArrayList<>();
+    private Set<Issue> issues = new HashSet<>();
     private Document manifest;
     private File file;
 
@@ -21,7 +21,7 @@ public abstract class BasePlugin implements Plugin {
     }
 
     @Override
-    public List<Issue> runForIssues() {
+    public Set<Issue> runForIssues() {
         run(file);
         return issues;
     }

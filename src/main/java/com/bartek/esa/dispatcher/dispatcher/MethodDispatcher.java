@@ -6,7 +6,7 @@ import com.bartek.esa.dispatcher.model.DispatcherActions;
 
 import javax.inject.Inject;
 import java.util.Collections;
-import java.util.List;
+import java.util.Set;
 
 public class MethodDispatcher {
 
@@ -15,7 +15,7 @@ public class MethodDispatcher {
 
     }
 
-    public List<Issue> dispatchMethod(CliArgsOptions options, DispatcherActions actions) {
+    public Set<Issue> dispatchMethod(CliArgsOptions options, DispatcherActions actions) {
         if(options.isSourceAnalysis()) {
             return actions.getSourceAnalysis().perform(
                     options.getSourceAnalysisDirectory(),
@@ -32,6 +32,6 @@ public class MethodDispatcher {
             );
         }
 
-        return Collections.emptyList();
+        return Collections.emptySet();
     }
 }

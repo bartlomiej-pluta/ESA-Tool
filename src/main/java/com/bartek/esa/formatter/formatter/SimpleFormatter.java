@@ -5,8 +5,8 @@ import com.bartek.esa.core.model.object.Issue;
 import com.bartek.esa.formatter.archetype.Formatter;
 
 import javax.inject.Inject;
-import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class SimpleFormatter implements Formatter {
@@ -18,7 +18,7 @@ public class SimpleFormatter implements Formatter {
     }
 
     @Override
-    public void format(List<Issue> issues) {
+    public void format(Set<Issue> issues) {
         if(issues.isEmpty()) {
             System.out.println("No issues found.");
             return;

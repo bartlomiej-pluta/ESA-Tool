@@ -7,8 +7,8 @@ import org.fusesource.jansi.Ansi;
 import org.fusesource.jansi.AnsiConsole;
 
 import javax.inject.Inject;
-import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static org.fusesource.jansi.Ansi.Color.*;
@@ -24,7 +24,7 @@ public class ColorFormatter implements Formatter {
     }
 
     @Override
-    public void format(List<Issue> issues) {
+    public void format(Set<Issue> issues) {
         AnsiConsole.systemInstall();
         if(issues.isEmpty()) {
             Ansi noIssuesFound = ansi().fg(GREEN).a("No issues found.").reset();
