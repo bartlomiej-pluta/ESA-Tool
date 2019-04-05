@@ -45,6 +45,10 @@ public abstract class BasePlugin implements Plugin {
         issues.add(issue);
     }
 
+    protected void addIssue(Issue issue) {
+        issues.add(issue);
+    }
+
     protected File getOriginalFile() {
         return file;
     }

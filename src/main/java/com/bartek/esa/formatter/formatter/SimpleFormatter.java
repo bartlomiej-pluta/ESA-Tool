@@ -19,7 +19,7 @@ public class SimpleFormatter implements Formatter {
 
     @Override
     public void format(Set<Issue> issues) {
-        if(issues.isEmpty()) {
+        if (issues.isEmpty()) {
             System.out.println("No issues found.");
             return;
         }
@@ -50,10 +50,13 @@ public class SimpleFormatter implements Formatter {
     }
 
     private void appendFile(Issue issue, StringBuilder format) {
-        format
-                .append("File: ")
-                .append(issue.getFile().getAbsolutePath())
-                .append("\n");
+        Optional.ofNullable(issue.getFile())
+                .ifPresent(file ->
+                        format
+                                .append("File: ")
+                                .append(file.getAbsolutePath())
+                                .append("\n")
+                );
     }
 
     private void appendLine(Issue issue, StringBuilder format) {
