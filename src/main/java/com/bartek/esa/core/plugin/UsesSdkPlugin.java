@@ -24,6 +24,10 @@ public class UsesSdkPlugin extends AndroidManifestPlugin {
             if(usesSdkNode.getAttributes().getNamedItem("android:minSdkVersion") == null) {
                 addIssue(Severity.ERROR, ".USES_SDK.NO_MIN_SDK_VERSION", null, null);
             }
+
+            Optional.ofNullable(usesSdkNode.getAttributes().getNamedItem("android:maxSdkVersion")).ifPresent(maxSdkVersion ->
+                addIssue(Severity.ERROR, ".USES_SDK.MAX_SDK_VERSION", null, maxSdkVersion.toString())
+            );
         }, () -> addIssue(Severity.ERROR, ".NO_USES_SDK", null, null));
     }
 }
