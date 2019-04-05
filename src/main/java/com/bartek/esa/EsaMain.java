@@ -4,7 +4,6 @@ import com.bartek.esa.analyser.apk.ApkAnalyser;
 import com.bartek.esa.analyser.source.SourceAnalyser;
 import com.bartek.esa.cli.model.CliArgsOptions;
 import com.bartek.esa.cli.parser.CliArgsParser;
-import com.bartek.esa.core.model.enumeration.Severity;
 import com.bartek.esa.core.model.object.Issue;
 import com.bartek.esa.di.DaggerDependencyInjector;
 import com.bartek.esa.dispatcher.dispatcher.MethodDispatcher;
@@ -44,7 +43,7 @@ public class EsaMain {
     }
 
     private void exitWithErrorIfAnyIssueIsAnError(Set<Issue> issues) {
-        if(issues.stream().anyMatch(i -> i.getSeverity() == Severity.ERROR)) {
+        if(issues.stream().anyMatch(i -> i.getSeverity().isExitWithError())) {
             System.exit(1);
         }
     }

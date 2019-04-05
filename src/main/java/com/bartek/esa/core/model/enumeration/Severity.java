@@ -1,6 +1,17 @@
 package com.bartek.esa.core.model.enumeration;
 
+import lombok.Getter;
+
+@Getter
 public enum Severity {
-    WARNING,
-    ERROR
+    INFO(false),
+    WARNING(false),
+    ERROR(true),
+    VULNERABILITY(true);
+
+    private final boolean exitWithError;
+
+    Severity(boolean exitWithError) {
+        this.exitWithError = exitWithError;
+    }
 }

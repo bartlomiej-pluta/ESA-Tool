@@ -87,8 +87,10 @@ public class ColorFormatter implements Formatter {
 
     private Ansi.Color getColorForSeverity(Issue issue) {
         switch(issue.getSeverity()) {
+            case INFO: return GREEN;
             case WARNING: return YELLOW;
-            case ERROR: return RED;
+            case ERROR: return MAGENTA;
+            case VULNERABILITY: return RED;
         }
 
         return RED;
