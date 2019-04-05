@@ -6,7 +6,6 @@ import com.bartek.esa.core.xml.XmlHelper;
 import com.bartek.esa.file.matcher.GlobMatcher;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.expr.MethodCallExpr;
-import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 
 import javax.inject.Inject;
 
@@ -19,14 +18,8 @@ public class LoggingPlugin extends JavaPlugin {
 
     @Override
     public void run(CompilationUnit compilationUnit) {
-        compilationUnit.accept(new VoidVisitorAdapter<Void>() {
-            @Override
-            public void visit(MethodCallExpr methodCall, Void arg) {
-                if (methodCall.getName().getIdentifier().matches("v|d|i|w|e|wtf")) {
-                    addIssue(Severity.INFO, getLineNumberFromExpression(methodCall), methodCall.toString());
-                }
-                super.visit(methodCall, arg);
-            }
-        }, null);
+        compilationUnit.findAll(MethodCallExpr.class).stream()
+                .filter(expr -> expr.getName().getIdentifier().matches("v|d|i|w|e|wtf"))
+                .forEach(expr -> addIssue(Severity.INFO, getLineNumberFromExpression(expr), expr.toString()));
     }
 }
