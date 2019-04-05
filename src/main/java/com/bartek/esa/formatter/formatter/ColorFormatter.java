@@ -73,8 +73,9 @@ public class ColorFormatter implements Formatter {
                 .map(file -> ansi
                         .fg(BLUE)
                         .a("File: ")
-                        .reset()
+                        .fg(CYAN)
                         .a(file.getAbsolutePath())
+                        .reset()
                         .a("\n"))
                 .orElse(ansi);
     }
@@ -86,10 +87,10 @@ public class ColorFormatter implements Formatter {
                             .fg(CYAN)
                             .a("Line");
                     Optional.ofNullable(issue.getLineNumber()).ifPresentOrElse(
-                            number -> ansi.a(" ").a(number).a(": "),
+                            number -> ansi.a(" ").fg(MAGENTA).a(number).fg(CYAN).a(": "),
                             () -> ansi.a(": ")
                     );
-                    ansi.reset().a(line).a("\n");
+                    ansi.fg(BLUE).a(line).reset().a("\n");
                 });
         return ansi;
     }
