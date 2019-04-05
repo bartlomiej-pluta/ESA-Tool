@@ -15,6 +15,7 @@ public class CliArgsOptions {
     private Set<String> excludes;
     private Set<String> plugins;
     private boolean color;
+    private Set<String> severities;
 
     public boolean isSourceAnalysis() {
         return sourceAnalysisDirectory != null;
@@ -26,8 +27,6 @@ public class CliArgsOptions {
 
     public static CliArgsOptions empty() {
         return CliArgsOptions.builder()
-                .sourceAnalysisDirectory(null)
-                .apkAuditFile(null)
                 .excludes(emptySet())
                 .plugins(emptySet())
                 .build();
