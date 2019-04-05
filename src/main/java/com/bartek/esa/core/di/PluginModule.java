@@ -69,4 +69,10 @@ public class PluginModule {
     public Plugin usesSdkPlugin(GlobMatcher globMatcher, XmlHelper xmlHelper) {
         return new UsesSdkPlugin(globMatcher, xmlHelper);
     }
+
+    @Provides
+    @IntoSet
+    public Plugin cipherInstancePlugin(GlobMatcher globMatcher, XmlHelper xmlHelper) {
+        return new CipherInstancePlugin(globMatcher, xmlHelper);
+    }
 }
