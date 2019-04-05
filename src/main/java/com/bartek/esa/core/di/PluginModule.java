@@ -1,6 +1,7 @@
 package com.bartek.esa.core.di;
 
 import com.bartek.esa.core.archetype.Plugin;
+import com.bartek.esa.core.java.JavaSyntaxRegexProvider;
 import com.bartek.esa.core.plugin.*;
 import com.bartek.esa.core.xml.XmlHelper;
 import com.bartek.esa.file.matcher.GlobMatcher;
@@ -49,5 +50,11 @@ public class PluginModule {
     @IntoSet
     public Plugin secureRandomPlugin(GlobMatcher globMatcher, XmlHelper xmlHelper) {
         return new SecureRandomPlugin(globMatcher, xmlHelper);
+    }
+
+    @Provides
+    @IntoSet
+    public Plugin implicitIntentsPlugin(GlobMatcher globMatcher, XmlHelper xmlHelper, JavaSyntaxRegexProvider javaSyntaxRegexProvider) {
+        return new ImplicitIntentsPlugin(globMatcher, xmlHelper, javaSyntaxRegexProvider);
     }
 }
