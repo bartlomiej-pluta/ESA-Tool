@@ -12,7 +12,6 @@ public abstract class XmlPlugin extends BasePlugin {
     private final XmlHelper xmlHelper;
 
     public XmlPlugin(GlobMatcher globMatcher, XmlHelper xmlHelper) {
-        super(xmlHelper);
         this.globMatcher = globMatcher;
         this.xmlHelper = xmlHelper;
     }

@@ -21,7 +21,6 @@ public abstract class JavaPlugin extends BasePlugin {
     private final XmlHelper xmlHelper;
 
     public JavaPlugin(GlobMatcher globMatcher, XmlHelper xmlHelper) {
-        super(xmlHelper);
         this.globMatcher = globMatcher;
         this.xmlHelper = xmlHelper;
     }
