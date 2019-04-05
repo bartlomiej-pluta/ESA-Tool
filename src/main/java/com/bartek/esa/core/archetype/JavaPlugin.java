@@ -7,6 +7,7 @@ import com.bartek.esa.error.EsaException;
 import com.bartek.esa.file.matcher.GlobMatcher;
 import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.CompilationUnit;
+import com.github.javaparser.ast.expr.Expression;
 import io.vavr.control.Try;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -59,6 +60,10 @@ public abstract class JavaPlugin extends BasePlugin {
 
         String path = packageValue.getNodeValue().replaceAll("\\.", "/");
         return globMatcher.fileMatchesGlobPattern(file, String.format("**/%s/**", path));
+    }
+
+    protected Integer getLineNumberFromExpression(Expression expression) {
+        return expression.getRange().map(r -> r.begin.line).orElse(null);
     }
 
     public abstract void run(CompilationUnit compilationUnit);
