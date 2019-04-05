@@ -57,4 +57,10 @@ public class PluginModule {
     public Plugin implicitIntentsPlugin(GlobMatcher globMatcher, XmlHelper xmlHelper, JavaSyntaxRegexProvider javaSyntaxRegexProvider) {
         return new ImplicitIntentsPlugin(globMatcher, xmlHelper, javaSyntaxRegexProvider);
     }
+
+    @Provides
+    @IntoSet
+    public Plugin sharedUidPlugin(GlobMatcher globMatcher, XmlHelper xmlHelper) {
+        return new SharedUidPlugin(globMatcher, xmlHelper);
+    }
 }
