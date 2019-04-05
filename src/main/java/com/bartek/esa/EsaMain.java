@@ -4,7 +4,6 @@ import com.bartek.esa.analyser.apk.ApkAnalyser;
 import com.bartek.esa.analyser.source.SourceAnalyser;
 import com.bartek.esa.cli.model.CliArgsOptions;
 import com.bartek.esa.cli.parser.CliArgsParser;
-import com.bartek.esa.core.model.enumeration.Severity;
 import com.bartek.esa.core.model.object.Issue;
 import com.bartek.esa.di.DaggerDependencyInjector;
 import com.bartek.esa.dispatcher.dispatcher.MethodDispatcher;
@@ -12,7 +11,7 @@ import com.bartek.esa.dispatcher.model.DispatcherActions;
 import com.bartek.esa.formatter.provider.FormatterProvider;
 
 import javax.inject.Inject;
-import java.util.List;
+import java.util.Set;
 
 public class EsaMain {
     private final CliArgsParser cliArgsParser;
@@ -37,14 +36,14 @@ public class EsaMain {
                 .build();
 
         CliArgsOptions options = cliArgsParser.parse(args);
-        List<Issue> issues = methodDispatcher.dispatchMethod(options, dispatcherActions);
+        Set<Issue> issues = methodDispatcher.dispatchMethod(options, dispatcherActions);
         formatterProvider.provide(options).format(issues);
 
         exitWithErrorIfAnyIssueIsAnError(issues);
     }
 
-    private void exitWithErrorIfAnyIssueIsAnError(List<Issue> issues) {
-        if(issues.stream().anyMatch(i -> i.getSeverity() == Severity.ERROR)) {
+    private void exitWithErrorIfAnyIssueIsAnError(Set<Issue> issues) {
+        if(issues.stream().anyMatch(i -> i.getSeverity().isExitWithError())) {
             System.exit(1);
         }
     }

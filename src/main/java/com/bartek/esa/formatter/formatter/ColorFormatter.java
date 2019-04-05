@@ -7,8 +7,9 @@ import org.fusesource.jansi.Ansi;
 import org.fusesource.jansi.AnsiConsole;
 
 import javax.inject.Inject;
-import java.util.List;
+import java.util.Arrays;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static org.fusesource.jansi.Ansi.Color.*;
@@ -24,9 +25,9 @@ public class ColorFormatter implements Formatter {
     }
 
     @Override
-    public void format(List<Issue> issues) {
+    public void format(Set<Issue> issues) {
         AnsiConsole.systemInstall();
-        if(issues.isEmpty()) {
+        if (issues.isEmpty()) {
             Ansi noIssuesFound = ansi().fg(GREEN).a("No issues found.").reset();
             System.out.println(noIssuesFound);
             return;
@@ -52,29 +53,36 @@ public class ColorFormatter implements Formatter {
 
     private Ansi appendDescription(Issue issue, Ansi ansi) {
         String description = descriptionProvider.getDescriptionForIssue(issue);
+        String[] lines = description.split("\n");
+        String firstLine = lines[0];
+        String theRestOfLines = lines.length > 1 ? "\n" + String.join("\n", Arrays.copyOfRange(lines, 1, lines.length)) : "";
 
         return ansi
                 .fg(getColorForSeverity(issue))
                 .a(issue.getSeverity().name())
                 .reset()
-                .a(": ").a(description)
+                .a(": ").a(firstLine)
+                .fgBrightBlack().a(theRestOfLines)
+                .reset()
                 .a("\n");
     }
 
     private Ansi appendFile(Issue issue, Ansi ansi) {
-        return ansi
-                .fg(GREEN)
-                .a("File: ")
-                .reset()
-                .a(issue.getFile().getAbsolutePath())
-                .a("\n");
+        return Optional.ofNullable(issue.getFile())
+                .map(file -> ansi
+                        .fg(BLUE)
+                        .a("File: ")
+                        .reset()
+                        .a(file.getAbsolutePath())
+                        .a("\n"))
+                .orElse(ansi);
     }
 
     private Ansi appendLine(Issue issue, Ansi ansi) {
         Optional.ofNullable(issue.getLine())
                 .ifPresent(line -> {
                     ansi
-                            .fg(BLUE)
+                            .fg(CYAN)
                             .a("Line");
                     Optional.ofNullable(issue.getLineNumber()).ifPresentOrElse(
                             number -> ansi.a(" ").a(number).a(": "),
@@ -86,9 +94,15 @@ public class ColorFormatter implements Formatter {
     }
 
     private Ansi.Color getColorForSeverity(Issue issue) {
-        switch(issue.getSeverity()) {
-            case WARNING: return YELLOW;
-            case ERROR: return RED;
+        switch (issue.getSeverity()) {
+            case INFO:
+                return GREEN;
+            case WARNING:
+                return YELLOW;
+            case ERROR:
+                return MAGENTA;
+            case VULNERABILITY:
+                return RED;
         }
 
         return RED;

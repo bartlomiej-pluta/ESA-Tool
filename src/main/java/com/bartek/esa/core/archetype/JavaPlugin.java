@@ -1,6 +1,7 @@
 package com.bartek.esa.core.archetype;
 
 import com.bartek.esa.core.model.enumeration.Severity;
+import com.bartek.esa.core.model.object.Issue;
 import com.bartek.esa.core.xml.XmlHelper;
 import com.bartek.esa.error.EsaException;
 import com.bartek.esa.file.matcher.GlobMatcher;
@@ -43,7 +44,14 @@ public abstract class JavaPlugin extends BasePlugin {
         Node packageValue = root.getAttributes().getNamedItem("package");
 
         if(packageValue == null) {
-            addIssue(Severity.ERROR, ".PACKAGE_LACK", null, null);
+            Issue issue = Issue.builder()
+                    .issuer(JavaPlugin.class)
+                    .descriptionCode(".NO_PACKAGE")
+                    .severity(Severity.ERROR)
+                    .build();
+
+            addIssue(issue);
+
             return false;
         }
 

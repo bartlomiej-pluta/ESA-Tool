@@ -8,7 +8,6 @@ import com.bartek.esa.file.provider.FileProvider;
 
 import java.io.File;
 import java.util.Collections;
-import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -25,13 +24,15 @@ public abstract class Analyser {
         this.fileProvider = fileProvider;
     }
 
-    public List<Issue> analyse(String source, Set<String> pluginCodes, Set<String> excludeCodes) {
+    public Set<Issue> analyse(String source, Set<String> pluginCodes, Set<String> excludeCodes) {
         String newSource = prepareSources(source);
         File manifest = getManifest(newSource);
         Set<File> files = getFiles(newSource);
         Set<Plugin> selectedPlugins = getPlugins(pluginCodes, excludeCodes);
 
-        return pluginExecutor.executeForFiles(manifest, files, selectedPlugins);
+        Set<Issue> issues = pluginExecutor.executeForFiles(manifest, files, selectedPlugins);
+        performCleaning(newSource);
+        return issues;
     }
 
     protected abstract String prepareSources(String source);
@@ -41,6 +42,8 @@ public abstract class Analyser {
     protected abstract String getJavaGlob();
 
     protected abstract String getLayoutGlob();
+
+    protected abstract void performCleaning(String source);
 
 
     private File getManifest(String source) {
