@@ -1,6 +1,7 @@
 package com.bartek.esa.core.di;
 
 import com.bartek.esa.core.archetype.Plugin;
+import com.bartek.esa.core.plugin.AllowBackupPlugin;
 import com.bartek.esa.core.plugin.DebuggablePlugin;
 import com.bartek.esa.core.plugin.LoggingPlugin;
 import com.bartek.esa.core.xml.XmlHelper;
@@ -32,5 +33,11 @@ public class PluginModule {
     @IntoSet
     public Plugin debuggablePlugin(GlobMatcher globMatcher, XmlHelper xmlHelper) {
         return new DebuggablePlugin(globMatcher, xmlHelper);
+    }
+
+    @Provides
+    @IntoSet
+    public Plugin allowBackupPlugin(GlobMatcher globMatcher, XmlHelper xmlHelper) {
+        return new AllowBackupPlugin(globMatcher, xmlHelper);
     }
 }
