@@ -25,6 +25,6 @@ public class AllowBackupPlugin extends AndroidManifestPlugin {
             if (!n.getNodeValue().equals("false")) {
                 addIssue(Severity.WARNING, ".NO_FALSE", null, n.toString());
             }
-        }, () -> addIssue(Severity.ERROR, ".NO_ATTR", null, null));
+        }, () -> addIssue(Severity.WARNING, ".NO_ATTR", null, null));
     }
 }
