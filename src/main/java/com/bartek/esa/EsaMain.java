@@ -12,6 +12,7 @@ import com.bartek.esa.formatter.provider.FormatterProvider;
 
 import javax.inject.Inject;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class EsaMain {
     private final CliArgsParser cliArgsParser;
@@ -37,9 +38,16 @@ public class EsaMain {
 
         CliArgsOptions options = cliArgsParser.parse(args);
         Set<Issue> issues = methodDispatcher.dispatchMethod(options, dispatcherActions);
-        formatterProvider.provide(options).format(issues);
+        Set<Issue> filteredIssues = filterIssuesBySeverity(options, issues);
+        formatterProvider.provide(options).format(filteredIssues);
 
-        exitWithErrorIfAnyIssueIsAnError(issues);
+        exitWithErrorIfAnyIssueIsAnError(filteredIssues);
+    }
+
+    private Set<Issue> filterIssuesBySeverity(CliArgsOptions options, Set<Issue> issues) {
+        return issues.stream()
+                .filter(issue -> options.getSeverities().contains(issue.getSeverity().name()))
+                .collect(Collectors.toSet());
     }
 
     private void exitWithErrorIfAnyIssueIsAnError(Set<Issue> issues) {

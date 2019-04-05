@@ -1,12 +1,15 @@
 package com.bartek.esa.cli.parser;
 
 import com.bartek.esa.cli.model.CliArgsOptions;
+import com.bartek.esa.core.model.enumeration.Severity;
 import org.apache.commons.cli.*;
 
 import javax.inject.Inject;
 import java.util.HashSet;
+import java.util.stream.Collectors;
 
 import static java.util.Arrays.asList;
+import static java.util.Arrays.stream;
 import static java.util.Collections.emptySet;
 
 public class CliArgsParser {
@@ -16,6 +19,7 @@ public class CliArgsParser {
     private static final String HELP_OPT = "help";
     private static final String PLUGINS_OPT = "plugins";
     private static final String COLOR_OPT = "color";
+    private static final String SEVERITIES_OPT = "severities";
 
     @Inject
     public CliArgsParser() {}
@@ -34,6 +38,7 @@ public class CliArgsParser {
 
         if (command.hasOption(HELP_OPT)) {
             printHelp();
+
             return CliArgsOptions.empty();
         }
 
@@ -49,6 +54,7 @@ public class CliArgsParser {
                 .plugins(command.hasOption(PLUGINS_OPT) ? new HashSet<>(asList(command.getOptionValues(PLUGINS_OPT))) : emptySet())
                 .excludes(command.hasOption(EXCLUDE_OPT) ? new HashSet<>(asList(command.getOptionValues(EXCLUDE_OPT))) : emptySet())
                 .color(command.hasOption(COLOR_OPT))
+                .severities(command.hasOption(SEVERITIES_OPT) ? new HashSet<>(asList((command.getOptionValues(SEVERITIES_OPT)))) : stream(Severity.values()).map(Severity::name).collect(Collectors.toSet()))
                 .build();
     }
 
@@ -65,6 +71,7 @@ public class CliArgsParser {
         options.addOption(plugins());
         options.addOption(help());
         options.addOption(color());
+        options.addOption(severities());
         return options;
     }
 
@@ -115,6 +122,16 @@ public class CliArgsParser {
         return Option.builder()
                 .longOpt(COLOR_OPT)
                 .desc("enable colored output")
+                .build();
+    }
+
+    private Option severities() {
+        String severities = stream(Severity.values()).map(Severity::name).map(String::toUpperCase).collect(Collectors.joining(", "));
+        return Option.builder()
+                .longOpt(SEVERITIES_OPT)
+                .argName("SEVERITY")
+                .numberOfArgs(Option.UNLIMITED_VALUES)
+                .desc("filter output to selected severities(available: " + severities + ")")
                 .build();
     }
 }
