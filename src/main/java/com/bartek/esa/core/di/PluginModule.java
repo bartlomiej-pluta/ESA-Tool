@@ -1,10 +1,7 @@
 package com.bartek.esa.core.di;
 
 import com.bartek.esa.core.archetype.Plugin;
-import com.bartek.esa.core.plugin.AllowBackupPlugin;
-import com.bartek.esa.core.plugin.DebuggablePlugin;
-import com.bartek.esa.core.plugin.LoggingPlugin;
-import com.bartek.esa.core.plugin.PermissionsRaceConditionPlugin;
+import com.bartek.esa.core.plugin.*;
 import com.bartek.esa.core.xml.XmlHelper;
 import com.bartek.esa.file.matcher.GlobMatcher;
 import dagger.Module;
@@ -46,5 +43,11 @@ public class PluginModule {
     @IntoSet
     public Plugin permissionRaceConditionPlugin(GlobMatcher globMatcher, XmlHelper xmlHelper) {
         return new PermissionsRaceConditionPlugin(globMatcher, xmlHelper);
+    }
+
+    @Provides
+    @IntoSet
+    public Plugin secureRandomPlugin(GlobMatcher globMatcher, XmlHelper xmlHelper) {
+        return new SecureRandomPlugin(globMatcher, xmlHelper);
     }
 }
