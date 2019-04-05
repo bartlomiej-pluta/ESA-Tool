@@ -63,4 +63,10 @@ public class PluginModule {
     public Plugin sharedUidPlugin(GlobMatcher globMatcher, XmlHelper xmlHelper) {
         return new SharedUidPlugin(globMatcher, xmlHelper);
     }
+
+    @Provides
+    @IntoSet
+    public Plugin usesSdkPlugin(GlobMatcher globMatcher, XmlHelper xmlHelper) {
+        return new UsesSdkPlugin(globMatcher, xmlHelper);
+    }
 }
