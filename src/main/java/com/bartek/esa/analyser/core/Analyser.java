@@ -9,6 +9,7 @@ import com.bartek.esa.file.provider.FileProvider;
 import java.io.File;
 import java.util.Collections;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -76,7 +77,7 @@ public abstract class Analyser {
             outputPlugins = plugins.stream()
                     .filter(plugin -> pluginCodes
                             .stream()
-                            .anyMatch(pluginCode -> plugin.getClass().getCanonicalName().equals(pluginCode))
+                            .anyMatch(doesNameMatchPlugin(plugin))
                     )
                     .collect(Collectors.toSet());
         }
@@ -85,11 +86,16 @@ public abstract class Analyser {
             outputPlugins = outputPlugins.stream()
                     .filter(plugin -> excludeCodes
                             .stream()
-                            .noneMatch(pluginCode -> plugin.getClass().getCanonicalName().equals(pluginCode))
+                            .noneMatch(doesNameMatchPlugin(plugin))
                     )
                     .collect(Collectors.toSet());
         }
 
         return outputPlugins;
+    }
+
+    private Predicate<String> doesNameMatchPlugin(Plugin plugin) {
+        return pluginCode -> plugin.getClass().getCanonicalName().equals(pluginCode)
+                || plugin.getClass().getSimpleName().equals(pluginCode);
     }
 }
