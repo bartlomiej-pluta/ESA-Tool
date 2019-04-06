@@ -1,6 +1,7 @@
 package com.bartek.esa.core.di;
 
 import com.bartek.esa.core.archetype.Plugin;
+import com.bartek.esa.core.helper.StaticScopeHelper;
 import com.bartek.esa.core.java.JavaSyntaxRegexProvider;
 import com.bartek.esa.core.plugin.*;
 import com.bartek.esa.core.xml.XmlHelper;
@@ -24,8 +25,8 @@ public class PluginModule {
 
     @Provides
     @IntoSet
-    public Plugin loggingPlugin(GlobMatcher globMatcher, XmlHelper xmlHelper) {
-        return new LoggingPlugin(globMatcher, xmlHelper);
+    public Plugin loggingPlugin(GlobMatcher globMatcher, XmlHelper xmlHelper, StaticScopeHelper staticScopeHelper) {
+        return new LoggingPlugin(globMatcher, xmlHelper, staticScopeHelper);
     }
 
     @Provides
@@ -72,13 +73,13 @@ public class PluginModule {
 
     @Provides
     @IntoSet
-    public Plugin cipherInstancePlugin(GlobMatcher globMatcher, XmlHelper xmlHelper) {
-        return new CipherInstancePlugin(globMatcher, xmlHelper);
+    public Plugin cipherInstancePlugin(GlobMatcher globMatcher, XmlHelper xmlHelper, StaticScopeHelper staticScopeHelper) {
+        return new CipherInstancePlugin(globMatcher, xmlHelper, staticScopeHelper);
     }
 
     @Provides
     @IntoSet
-    public Plugin strictModePlugin(GlobMatcher globMatcher, XmlHelper xmlHelper) {
-        return new StrictModePlugin(globMatcher, xmlHelper);
+    public Plugin strictModePlugin(GlobMatcher globMatcher, XmlHelper xmlHelper, StaticScopeHelper staticScopeHelper) {
+        return new StrictModePlugin(globMatcher, xmlHelper, staticScopeHelper);
     }
 }
