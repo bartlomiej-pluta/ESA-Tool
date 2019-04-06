@@ -75,4 +75,10 @@ public class PluginModule {
     public Plugin cipherInstancePlugin(GlobMatcher globMatcher, XmlHelper xmlHelper) {
         return new CipherInstancePlugin(globMatcher, xmlHelper);
     }
+
+    @Provides
+    @IntoSet
+    public Plugin strictModePlugin(GlobMatcher globMatcher, XmlHelper xmlHelper) {
+        return new StrictModePlugin(globMatcher, xmlHelper);
+    }
 }
