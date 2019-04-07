@@ -2,6 +2,7 @@ package com.bartek.esa.core.di;
 
 import com.bartek.esa.core.desc.provider.DescriptionProvider;
 import com.bartek.esa.core.executor.PluginExecutor;
+import com.bartek.esa.core.helper.ParentNodeFinder;
 import com.bartek.esa.core.helper.StaticScopeHelper;
 import com.bartek.esa.core.java.JavaSyntaxRegexProvider;
 import com.bartek.esa.core.xml.XmlHelper;
@@ -34,5 +35,10 @@ public class CoreModule {
     @Provides
     public StaticScopeHelper staticScopeHelper() {
         return new StaticScopeHelper();
+    }
+
+    @Provides
+    public ParentNodeFinder parentNodeFinder() {
+        return new ParentNodeFinder();
     }
 }
