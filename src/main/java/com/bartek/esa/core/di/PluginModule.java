@@ -89,4 +89,10 @@ public class PluginModule {
     public Plugin externalStoragePlugin(GlobMatcher globMatcher, XmlHelper xmlHelper, ParentNodeFinder parentNodeFinder) {
         return new ExternalStoragePlugin(globMatcher, xmlHelper, parentNodeFinder);
     }
+
+    @Provides
+    @IntoSet
+    public Plugin suppressWarningsPlugin(GlobMatcher globMatcher, XmlHelper xmlHelper) {
+        return new SuppressWarningsPlugin(globMatcher, xmlHelper);
+    }
 }
