@@ -1,6 +1,7 @@
 package com.bartek.esa.core.di;
 
 import com.bartek.esa.core.archetype.Plugin;
+import com.bartek.esa.core.helper.ParentNodeFinder;
 import com.bartek.esa.core.helper.StaticScopeHelper;
 import com.bartek.esa.core.java.JavaSyntaxRegexProvider;
 import com.bartek.esa.core.plugin.*;
@@ -81,5 +82,11 @@ public class PluginModule {
     @IntoSet
     public Plugin strictModePlugin(GlobMatcher globMatcher, XmlHelper xmlHelper, StaticScopeHelper staticScopeHelper) {
         return new StrictModePlugin(globMatcher, xmlHelper, staticScopeHelper);
+    }
+
+    @Provides
+    @IntoSet
+    public Plugin externalStoragePlugin(GlobMatcher globMatcher, XmlHelper xmlHelper, ParentNodeFinder parentNodeFinder) {
+        return new ExternalStoragePlugin(globMatcher, xmlHelper, parentNodeFinder);
     }
 }
