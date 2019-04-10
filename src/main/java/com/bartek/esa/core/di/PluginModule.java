@@ -119,4 +119,10 @@ public class PluginModule {
     public Plugin intentFilterPlugin(GlobMatcher globMatcher, XmlHelper xmlHelper) {
         return new IntentFilterPlugin(globMatcher, xmlHelper);
     }
+
+    @Provides
+    @IntoSet
+    public Plugin sqlInjectionPlugin(GlobMatcher globMatcher, XmlHelper xmlHelper) {
+        return new SqlInjectionPlugin(globMatcher, xmlHelper);
+    }
 }
