@@ -10,6 +10,7 @@ import org.w3c.dom.NodeList;
 
 import javax.inject.Inject;
 import javax.xml.xpath.XPathConstants;
+import java.util.Map;
 import java.util.Optional;
 
 import static java.lang.String.format;
@@ -34,7 +35,14 @@ public class ExportedComponentsPlugin extends AndroidManifestPlugin {
         stream(exportedActivities)
                 .filter(this::isExported)
                 .filter(node -> doesNotHavePermission(node, "android:permission"))
-                .forEach(node -> addIssue(Severity.WARNING, format(".%s.NO_PERMISSION", component.toUpperCase()), null, tagString(node)));
+                .forEach(node -> addIssue(Severity.WARNING, ".NO_PERMISSION", getModel(node), null, null));
+    }
+
+    private Map<String, String> getModel(Node node) {
+        return Map.of(
+                "componentName", node.getAttributes().getNamedItem("android:name").getNodeValue(),
+                "componentType", node.getNodeName()
+        );
     }
 
     private void findExportedProviders(Document xml) {
@@ -43,7 +51,7 @@ public class ExportedComponentsPlugin extends AndroidManifestPlugin {
                 .filter(this::isExported)
                 .filter(node -> doesNotHavePermission(node, "android:writePermission")
                         || doesNotHavePermission(node, "android:readPermission"))
-                .forEach(node -> addIssue(Severity.WARNING, ".PROVIDER.NO_PERMISSION", null, tagString(node)));
+                .forEach(node -> addIssue(Severity.WARNING, ".NO_PERMISSION", getModel(node), null, null));
     }
 
     private boolean doesNotHavePermission(Node node, String permissionAttribute) {

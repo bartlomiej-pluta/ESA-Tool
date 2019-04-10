@@ -10,6 +10,7 @@ import org.w3c.dom.NodeList;
 
 import javax.inject.Inject;
 import javax.xml.xpath.XPathConstants;
+import java.util.Map;
 
 import static java.lang.Integer.parseInt;
 
@@ -28,8 +29,12 @@ public class PermissionsRaceConditionPlugin extends AndroidManifestPlugin {
             Node minSdkVersionNode = usesSdkNode.getAttributes().getNamedItem("android:minSdkVersion");
             int minSdkVersion = parseInt(minSdkVersionNode.getNodeValue());
             if(minSdkVersion < 21) {
-                addIssue(Severity.VULNERABILITY, null, minSdkVersionNode.toString());
+                addIssue(Severity.VULNERABILITY, getModel(minSdkVersion), null, minSdkVersionNode.toString());
             }
         }
+    }
+
+    private Map<String, String> getModel(int minSdkVersion) {
+        return Map.of("minSdkVersion", Integer.toString(minSdkVersion));
     }
 }

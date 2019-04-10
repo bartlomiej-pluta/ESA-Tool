@@ -9,6 +9,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import javax.inject.Inject;
+import java.util.Map;
 
 public class IntentFilterPlugin extends AndroidManifestPlugin {
 
@@ -23,7 +24,14 @@ public class IntentFilterPlugin extends AndroidManifestPlugin {
         stream(filters)
                 .filter(this::isNotMainActivity)
                 .map(Node::getParentNode)
-                .forEach(n -> addIssue(Severity.INFO, null, tagString(n)));
+                .forEach(n -> addIssue(Severity.INFO, getModel(n), null, null));
+    }
+
+    private Map<String, String> getModel(Node node) {
+        return Map.of(
+                "componentType", node.getNodeName(),
+                "componentName", node.getAttributes().getNamedItem("android:name").getNodeValue()
+        );
     }
 
     private boolean isNotMainActivity(Node filter) {

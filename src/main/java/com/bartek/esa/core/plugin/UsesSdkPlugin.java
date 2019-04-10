@@ -9,6 +9,7 @@ import org.w3c.dom.Node;
 
 import javax.inject.Inject;
 import javax.xml.xpath.XPathConstants;
+import java.util.Map;
 import java.util.Optional;
 
 public class UsesSdkPlugin extends AndroidManifestPlugin {
@@ -26,7 +27,7 @@ public class UsesSdkPlugin extends AndroidManifestPlugin {
             }
 
             Optional.ofNullable(usesSdkNode.getAttributes().getNamedItem("android:maxSdkVersion")).ifPresent(maxSdkVersion ->
-                addIssue(Severity.ERROR, ".USES_SDK.MAX_SDK_VERSION", null, maxSdkVersion.toString())
+                addIssue(Severity.ERROR, ".USES_SDK.MAX_SDK_VERSION", Map.of("maxSdkVersion", maxSdkVersion.getNodeValue()),null, maxSdkVersion.toString())
             );
         }, () -> addIssue(Severity.ERROR, ".NO_USES_SDK", null, null));
     }
