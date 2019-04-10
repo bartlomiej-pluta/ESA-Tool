@@ -107,4 +107,10 @@ public class PluginModule {
     public Plugin dangerousPermissionPlugin(GlobMatcher globMatcher, XmlHelper xmlHelper) {
         return new DangerousPermissionPlugin(globMatcher, xmlHelper);
     }
+
+    @Provides
+    @IntoSet
+    public Plugin textInputValidationPlugin(GlobMatcher globMatcher, XmlHelper xmlHelper) {
+        return new TextInputValidationPlugin(globMatcher, xmlHelper);
+    }
 }
