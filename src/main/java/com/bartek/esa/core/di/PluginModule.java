@@ -95,4 +95,10 @@ public class PluginModule {
     public Plugin suppressWarningsPlugin(GlobMatcher globMatcher, XmlHelper xmlHelper) {
         return new SuppressWarningsPlugin(globMatcher, xmlHelper);
     }
+
+    @Provides
+    @IntoSet
+    public Plugin exportedComponentsPlugin(GlobMatcher globMatcher, XmlHelper xmlHelper) {
+        return new ExportedComponentsPlugin(globMatcher, xmlHelper);
+    }
 }
