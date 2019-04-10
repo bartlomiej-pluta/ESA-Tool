@@ -101,4 +101,10 @@ public class PluginModule {
     public Plugin exportedComponentsPlugin(GlobMatcher globMatcher, XmlHelper xmlHelper) {
         return new ExportedComponentsPlugin(globMatcher, xmlHelper);
     }
+
+    @Provides
+    @IntoSet
+    public Plugin dangerousPermissionPlugin(GlobMatcher globMatcher, XmlHelper xmlHelper) {
+        return new DangerousPermissionPlugin(globMatcher, xmlHelper);
+    }
 }
