@@ -6,4 +6,6 @@ ext {
   javaParserVersion = '3.13.4'
   commonsIoVersion = '2.6'
   jansiVersion = '1.17.1'
+  commonsLangVersion = '3.8.1'
+  commonsTextVersion = '1.6'
 }

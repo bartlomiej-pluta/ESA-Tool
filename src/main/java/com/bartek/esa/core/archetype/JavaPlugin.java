@@ -13,6 +13,7 @@ import org.w3c.dom.Node;
 
 import javax.xml.xpath.XPathConstants;
 import java.io.File;
+import java.util.HashMap;
 
 public abstract class JavaPlugin extends BasePlugin {
     private final GlobMatcher globMatcher;
@@ -47,6 +48,7 @@ public abstract class JavaPlugin extends BasePlugin {
             Issue issue = Issue.builder()
                     .issuer(JavaPlugin.class)
                     .descriptionCode(".NO_PACKAGE")
+                    .descriptionModel(new HashMap<>())
                     .severity(Severity.ERROR)
                     .build();
 

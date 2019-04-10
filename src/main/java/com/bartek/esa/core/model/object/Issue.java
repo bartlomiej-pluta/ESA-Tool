@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 
 import java.io.File;
+import java.util.Map;
 
 @Data
 @Builder
@@ -12,6 +13,7 @@ public class Issue implements Comparable {
     private final Class<?> issuer;
     private final Severity severity;
     private final String descriptionCode;
+    private final Map<String, String> descriptionModel;
     private final File file;
     private final Integer lineNumber;
     private final String line;
