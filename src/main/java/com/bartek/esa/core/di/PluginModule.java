@@ -113,4 +113,10 @@ public class PluginModule {
     public Plugin textInputValidationPlugin(GlobMatcher globMatcher, XmlHelper xmlHelper) {
         return new TextInputValidationPlugin(globMatcher, xmlHelper);
     }
+
+    @Provides
+    @IntoSet
+    public Plugin intentFilterPlugin(GlobMatcher globMatcher, XmlHelper xmlHelper) {
+        return new IntentFilterPlugin(globMatcher, xmlHelper);
+    }
 }
