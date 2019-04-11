@@ -1,5 +1,6 @@
 package com.bartek.esa.decompiler.decompiler;
 
+import com.bartek.esa.decompiler.archetype.Decompiler;
 import com.bartek.esa.decompiler.process.ProcessExecutor;
 import com.bartek.esa.file.cleaner.FileCleaner;
 import com.bartek.esa.file.provider.FileProvider;
@@ -10,9 +11,9 @@ import javax.inject.Inject;
 import java.io.File;
 import java.util.Set;
 
-public class Decompiler {
-    public static final String XML_FILES_DIR = "xml";
-    public static final String JAVA_FILES_DIR = "java";
+public class CfrDecompiler implements Decompiler {
+    private static final String XML_FILES_DIR = "xml";
+    private static final String JAVA_FILES_DIR = "java";
 
     private static final String APK_UNZIPPED_DIR = "apk_unzipped";
     private static final String JAR_FILES_DIR = "jar";
@@ -23,13 +24,14 @@ public class Decompiler {
     private final FileCleaner fileCleaner;
 
     @Inject
-    public Decompiler(FileProvider fileProvider, ProcessExecutor processExecutor1, ZipTool zipTool, FileCleaner fileCleaner) {
+    public CfrDecompiler(FileProvider fileProvider, ProcessExecutor processExecutor1, ZipTool zipTool, FileCleaner fileCleaner) {
         this.fileProvider = fileProvider;
         this.processExecutor = processExecutor1;
         this.zipTool = zipTool;
         this.fileCleaner = fileCleaner;
     }
 
+    @Override
     public File decompile(File inputApk, boolean debug) {
         File tmp = fileProvider.createTemporaryDirectory();
         File javaDirectory = new File(tmp, JAVA_FILES_DIR);
@@ -39,6 +41,21 @@ public class Decompiler {
         decompileXmlFiles(inputApk, xmlDirectory, debug);
 
         return tmp;
+    }
+
+    @Override
+    public String getAndroidManifestFolder() {
+        return "";
+    }
+
+    @Override
+    public String getResFolder() {
+        return XML_FILES_DIR;
+    }
+
+    @Override
+    public String getJavaSourcesFolder() {
+        return JAVA_FILES_DIR;
     }
 
     private void decompileJavaFiles(File inputApk, File tmp, File javaDirectory, boolean debug) {

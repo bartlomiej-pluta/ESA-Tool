@@ -21,7 +21,6 @@ public class ProcessExecutor {
                 .getOrElseThrow(EsaException::new);
         printStdOutAndStdErrFromProcess(debug, process);
         waitForProcess(process);
-        checkExitValue(process, command[0]);
     }
 
     private void printCommandLine(String[] command, boolean debug) {
@@ -54,11 +53,5 @@ public class ProcessExecutor {
 
     private void waitForProcess(Process process) {
         Try.run(process::waitFor).getOrElseThrow(EsaException::new);
-    }
-
-    private void checkExitValue(Process process, String commandName) {
-        if (process.exitValue() != 0) {
-            throw new EsaException("'" + commandName + "' process has finished with non-zero code. Interrupting...");
-        }
     }
 }
