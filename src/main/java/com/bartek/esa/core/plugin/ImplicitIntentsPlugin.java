@@ -95,8 +95,12 @@ public class ImplicitIntentsPlugin extends JavaPlugin {
 
         // Not works for: new Intent(this, ...)
         if(arguments.size() == 2) {
-            Expression argument = arguments.get(0);
-            isImplicit = !argument.isThisExpr();
+            Expression firstArg = arguments.get(0);
+            Expression secondArg = arguments.get(1);
+            boolean isThisExpr = firstArg.isThisExpr();
+            boolean isTryingToGetClass = secondArg.isClassExpr();
+            boolean isExplicit = isThisExpr || isTryingToGetClass;
+            isImplicit = !isExplicit;
         }
 
         return isImplicit;
