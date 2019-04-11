@@ -24,18 +24,18 @@ public abstract class Analyser {
         this.fileProvider = fileProvider;
     }
 
-    public Set<Issue> analyse(String source, Set<String> pluginCodes, Set<String> excludeCodes) {
-        String newSource = prepareSources(source);
+    public Set<Issue> analyse(String source, Set<String> pluginCodes, Set<String> excludeCodes, boolean debug) {
+        String newSource = prepareSources(source, debug);
         File manifest = getManifest(newSource);
         Set<File> files = getFiles(newSource);
         Set<Plugin> selectedPlugins = getPlugins(pluginCodes, excludeCodes);
 
-        Set<Issue> issues = pluginExecutor.executeForFiles(manifest, files, selectedPlugins);
-        performCleaning(newSource);
+        Set<Issue> issues = pluginExecutor.executeForFiles(manifest, files, selectedPlugins, debug);
+        performCleaning(newSource, debug);
         return issues;
     }
 
-    protected abstract String prepareSources(String source);
+    protected abstract String prepareSources(String source, boolean debug);
 
     protected abstract String getAndroidManifestGlob();
 
@@ -43,7 +43,7 @@ public abstract class Analyser {
 
     protected abstract String getLayoutGlob();
 
-    protected abstract void performCleaning(String source);
+    protected abstract void performCleaning(String source, boolean debug);
 
 
     private File getManifest(String source) {

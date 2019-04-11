@@ -20,7 +20,8 @@ public class MethodDispatcher {
             return actions.getSourceAnalysis().perform(
                     options.getSourceAnalysisDirectory(),
                     options.getPlugins(),
-                    options.getExcludes()
+                    options.getExcludes(),
+                    options.isDebug()
             );
         }
 
@@ -28,7 +29,8 @@ public class MethodDispatcher {
             return actions.getApkAudit().perform(
                     options.getApkAuditFile(),
                     options.getPlugins(),
-                    options.getExcludes()
+                    options.getExcludes(),
+                    options.isDebug()
             );
         }
 

@@ -20,6 +20,7 @@ public class CliArgsParser {
     private static final String PLUGINS_OPT = "plugins";
     private static final String COLOR_OPT = "color";
     private static final String SEVERITIES_OPT = "severities";
+    private static final String DEBUG_OPT = "debug";
 
     @Inject
     public CliArgsParser() {}
@@ -55,6 +56,7 @@ public class CliArgsParser {
                 .excludes(command.hasOption(EXCLUDE_OPT) ? new HashSet<>(asList(command.getOptionValues(EXCLUDE_OPT))) : emptySet())
                 .color(command.hasOption(COLOR_OPT))
                 .severities(command.hasOption(SEVERITIES_OPT) ? new HashSet<>(asList((command.getOptionValues(SEVERITIES_OPT)))) : stream(Severity.values()).map(Severity::name).collect(Collectors.toSet()))
+                .debug(command.hasOption(DEBUG_OPT))
                 .build();
     }
 
@@ -72,6 +74,7 @@ public class CliArgsParser {
         options.addOption(help());
         options.addOption(color());
         options.addOption(severities());
+        options.addOption(debug());
         return options;
     }
 
@@ -132,6 +135,13 @@ public class CliArgsParser {
                 .argName("SEVERITY")
                 .numberOfArgs(Option.UNLIMITED_VALUES)
                 .desc("filter output to selected severities(available: " + severities + ")")
+                .build();
+    }
+
+    private Option debug() {
+        return Option.builder()
+                .longOpt(DEBUG_OPT)
+                .desc("enable debug mode")
                 .build();
     }
 }

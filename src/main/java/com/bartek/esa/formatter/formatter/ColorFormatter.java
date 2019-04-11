@@ -34,6 +34,7 @@ public class ColorFormatter implements Formatter {
         }
 
         String format = issues.stream()
+                .sorted()
                 .map(this::format)
                 .collect(Collectors.joining());
 

@@ -19,16 +19,18 @@ public class PluginExecutor {
         this.xmlHelper = xmlHelper;
     }
 
-    public Set<Issue> executeForFiles(File manifest, Set<File> files, Set<Plugin> plugins) {
+    public Set<Issue> executeForFiles(File manifest, Set<File> files, Set<Plugin> plugins, boolean debug) {
         return files.stream()
-                .map(file -> executeForFile(manifest, file, plugins))
+                .peek(file -> { if(debug) System.out.printf("File: %s", file.getAbsolutePath()); })
+                .map(file -> executeForFile(manifest, file, plugins, debug))
                 .flatMap(Set::stream)
                 .collect(toSet());
     }
 
-    private Set<Issue> executeForFile(File manifest, File file, Set<Plugin> plugins) {
+    private Set<Issue> executeForFile(File manifest, File file, Set<Plugin> plugins, boolean debug) {
         Document xmlManifest = xmlHelper.parseXml(manifest);
-        return plugins.stream()
+        return plugins.parallelStream()
+                .peek(plugin -> { if(debug) System.out.printf(" Plugin: %s", plugin.getClass().getCanonicalName()); })
                 .peek(plugin -> plugin.update(file, xmlManifest))
                 .filter(plugin -> plugin.supports(file))
                 .map(Plugin::runForIssues)
