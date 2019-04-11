@@ -19,7 +19,7 @@ public class SourceAnalyser extends Analyser {
     }
 
     @Override
-    protected String prepareSources(String source) {
+    protected String prepareSources(String source, boolean debug) {
         checkIfSourceIsDirectory(source);
         return source;
     }
@@ -46,7 +46,7 @@ public class SourceAnalyser extends Analyser {
     }
 
     @Override
-    protected void performCleaning(String source) {
+    protected void performCleaning(String source, boolean debug) {
         // do nothing
     }
 }

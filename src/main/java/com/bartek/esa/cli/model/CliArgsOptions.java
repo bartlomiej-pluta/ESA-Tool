@@ -16,6 +16,7 @@ public class CliArgsOptions {
     private Set<String> plugins;
     private boolean color;
     private Set<String> severities;
+    private boolean debug;
 
     public boolean isSourceAnalysis() {
         return sourceAnalysisDirectory != null;

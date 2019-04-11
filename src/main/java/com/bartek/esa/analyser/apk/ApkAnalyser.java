@@ -29,10 +29,10 @@ public class ApkAnalyser extends Analyser {
     }
 
     @Override
-    protected String prepareSources(String source) {
+    protected String prepareSources(String source, boolean debug) {
         checkIfSourceIsApkFile(source);
         System.out.println("Decompiling APK...");
-        return decompiler.decompile(new File(source)).getAbsolutePath();
+        return decompiler.decompile(new File(source), debug).getAbsolutePath();
     }
 
     private void checkIfSourceIsApkFile(String source) {
@@ -57,7 +57,7 @@ public class ApkAnalyser extends Analyser {
     }
 
     @Override
-    protected void performCleaning(String source) {
+    protected void performCleaning(String source, boolean debug) {
         fileCleaner.deleteRecursively(new File(source));
     }
 }

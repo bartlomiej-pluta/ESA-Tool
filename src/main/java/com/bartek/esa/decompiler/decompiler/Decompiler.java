@@ -30,51 +30,51 @@ public class Decompiler {
         this.fileCleaner = fileCleaner;
     }
 
-    public File decompile(File inputApk) {
+    public File decompile(File inputApk, boolean debug) {
         File tmp = fileProvider.createTemporaryDirectory();
         File javaDirectory = new File(tmp, JAVA_FILES_DIR);
         File xmlDirectory = new File(tmp, XML_FILES_DIR);
 
-        decompileJavaFiles(inputApk, tmp, javaDirectory);
-        decompileXmlFiles(inputApk, xmlDirectory);
+        decompileJavaFiles(inputApk, tmp, javaDirectory, debug);
+        decompileXmlFiles(inputApk, xmlDirectory, debug);
 
         return tmp;
     }
 
-    private void decompileJavaFiles(File inputApk, File tmp, File javaDirectory) {
+    private void decompileJavaFiles(File inputApk, File tmp, File javaDirectory, boolean debug) {
         File unzippedApkDirectory = new File(tmp, APK_UNZIPPED_DIR);
         File jarDirectory = new File(tmp, JAR_FILES_DIR);
 
         zipTool.unzipArchive(inputApk, unzippedApkDirectory);
 
         Set<File> dexFiles = fileProvider.getGlobMatchedFiles(unzippedApkDirectory.getAbsolutePath(), "**/*.dex");
-        convertDexToJar(dexFiles, jarDirectory);
+        convertDexToJar(dexFiles, jarDirectory, debug);
 
         Set<File> jarFiles = fileProvider.getGlobMatchedFiles(jarDirectory.getAbsolutePath(), "**/*.jar");
-        decompileJar(jarFiles, javaDirectory);
+        decompileJar(jarFiles, javaDirectory, debug);
 
         fileCleaner.deleteRecursively(unzippedApkDirectory);
         fileCleaner.deleteRecursively(jarDirectory);
     }
 
-    private void decompileXmlFiles(File inputApk, File target) {
+    private void decompileXmlFiles(File inputApk, File target, boolean debug) {
         String[] command = {"apktool", "d", inputApk.getAbsolutePath(), "-o", target.getAbsolutePath()};
-        processExecutor.execute(command);
+        processExecutor.execute(command, debug);
     }
 
-    private void convertDexToJar(Set<File> dexFiles, File target) {
+    private void convertDexToJar(Set<File> dexFiles, File target, boolean debug) {
         dexFiles.forEach(dex -> {
             String jarFilename = FilenameUtils.removeExtension(dex.getName()) + ".jar";
             File jarFile = new File(target, jarFilename);
             String[] command = {"dex2jar", dex.getAbsolutePath(), "-o", jarFile.getAbsolutePath()};
-            processExecutor.execute(command);
+            processExecutor.execute(command, debug);
         });
     }
 
-    private void decompileJar(Set<File> jarFiles, File target) {
+    private void decompileJar(Set<File> jarFiles, File target, boolean debug) {
         jarFiles.forEach(jar -> {
             String[] command = {"cfr", jar.getAbsolutePath(), "--outputdir", target.getAbsolutePath()};
-            processExecutor.execute(command);
+            processExecutor.execute(command, debug);
         });
     }
 }
