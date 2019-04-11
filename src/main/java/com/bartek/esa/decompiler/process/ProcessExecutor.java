@@ -21,44 +21,39 @@ public class ProcessExecutor {
                 .getOrElseThrow(EsaException::new);
         printStdOutAndStdErrFromProcess(debug, process);
         waitForProcess(process);
-        checkExitValue(process, command[0]);
     }
 
     private void printCommandLine(String[] command, boolean debug) {
-        if(debug) {
+        if (debug) {
             System.out.println(String.join(" ", command));
         }
     }
 
     private void printStdOutAndStdErrFromProcess(boolean debug, Process process) {
-        if(debug) {
-            BufferedReader stdout = new BufferedReader(new InputStreamReader(process.getInputStream()));
-            BufferedReader stderr = new BufferedReader(new InputStreamReader(process.getErrorStream()));
-            String line;
-            try {
-                while ((line = stdout.readLine()) != null) {
+        BufferedReader stdout = new BufferedReader(new InputStreamReader(process.getInputStream()));
+        BufferedReader stderr = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+        String line;
+        try {
+            while ((line = stdout.readLine()) != null) {
+                if (debug) {
                     System.out.println(line);
                 }
+            }
 
-                while ((line = stderr.readLine()) != null) {
+            while ((line = stderr.readLine()) != null) {
+                if (debug) {
                     System.err.println(line);
                 }
-
-                stdout.close();
-                stderr.close();
-            } catch (IOException e) {
-                throw new EsaException(e);
             }
+
+            stdout.close();
+            stderr.close();
+        } catch (IOException e) {
+            throw new EsaException(e);
         }
     }
 
     private void waitForProcess(Process process) {
         Try.run(process::waitFor).getOrElseThrow(EsaException::new);
-    }
-
-    private void checkExitValue(Process process, String commandName) {
-        if (process.exitValue() != 0) {
-            throw new EsaException("'" + commandName + "' process has finished with non-zero code. Interrupting...");
-        }
     }
 }

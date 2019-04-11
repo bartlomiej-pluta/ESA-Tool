@@ -4,7 +4,7 @@ import com.bartek.esa.analyser.apk.ApkAnalyser;
 import com.bartek.esa.analyser.source.SourceAnalyser;
 import com.bartek.esa.core.archetype.Plugin;
 import com.bartek.esa.core.executor.PluginExecutor;
-import com.bartek.esa.decompiler.decompiler.Decompiler;
+import com.bartek.esa.decompiler.archetype.Decompiler;
 import com.bartek.esa.file.cleaner.FileCleaner;
 import com.bartek.esa.file.matcher.GlobMatcher;
 import com.bartek.esa.file.provider.FileProvider;
