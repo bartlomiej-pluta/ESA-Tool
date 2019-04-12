@@ -125,4 +125,10 @@ public class PluginModule {
     public Plugin sqlInjectionPlugin(GlobMatcher globMatcher, XmlHelper xmlHelper) {
         return new SqlInjectionPlugin(globMatcher, xmlHelper);
     }
+
+    @Provides
+    @IntoSet
+    public Plugin worldAccessPermissionsPlugin(GlobMatcher globMatcher, XmlHelper xmlHelper) {
+        return new WorldAccessPermissionsPlugin(globMatcher, xmlHelper);
+    }
 }
