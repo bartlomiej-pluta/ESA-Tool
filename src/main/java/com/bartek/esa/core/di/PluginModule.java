@@ -131,4 +131,10 @@ public class PluginModule {
     public Plugin worldAccessPermissionsPlugin(GlobMatcher globMatcher, XmlHelper xmlHelper) {
         return new WorldAccessPermissionsPlugin(globMatcher, xmlHelper);
     }
+
+    @Provides
+    @IntoSet
+    public Plugin orderedAndStickyBroadcastPlugin(GlobMatcher globMatcher, XmlHelper xmlHelper) {
+        return new OrderedBroadcastPlugin(globMatcher, xmlHelper);
+    }
 }
