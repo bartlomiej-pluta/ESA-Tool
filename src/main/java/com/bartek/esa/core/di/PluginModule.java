@@ -143,4 +143,10 @@ public class PluginModule {
     public Plugin webViewPlugin(GlobMatcher globMatcher, XmlHelper xmlHelper) {
         return new WebViewPlugin(globMatcher, xmlHelper);
     }
+
+    @Provides
+    @IntoSet
+    public Plugin telephonyManagerPlugin(GlobMatcher globMatcher, XmlHelper xmlHelper) {
+        return new TelephonyManagerPlugin(globMatcher, xmlHelper);
+    }
 }
