@@ -1,6 +1,7 @@
 package com.bartek.esa.cli.parser;
 
 import com.bartek.esa.cli.model.CliArgsOptions;
+import com.bartek.esa.cli.printer.PluginPrinter;
 import com.bartek.esa.core.model.enumeration.Severity;
 import org.apache.commons.cli.*;
 
@@ -21,9 +22,14 @@ public class CliArgsParser {
     private static final String COLOR_OPT = "color";
     private static final String SEVERITIES_OPT = "severities";
     private static final String DEBUG_OPT = "debug";
+    private static final String LIST_PLUGINS_OPT = "list-plugins";
+
+    private final PluginPrinter pluginPrinter;
 
     @Inject
-    public CliArgsParser() {}
+    public CliArgsParser(PluginPrinter pluginPrinter) {
+        this.pluginPrinter = pluginPrinter;
+    }
 
     public CliArgsOptions parse(String[] args) {
         try {
@@ -39,6 +45,12 @@ public class CliArgsParser {
 
         if (command.hasOption(HELP_OPT)) {
             printHelp();
+
+            return CliArgsOptions.empty();
+        }
+
+        if (command.hasOption(LIST_PLUGINS_OPT)) {
+            pluginPrinter.printPlugins();
 
             return CliArgsOptions.empty();
         }
@@ -75,6 +87,7 @@ public class CliArgsParser {
         options.addOption(color());
         options.addOption(severities());
         options.addOption(debug());
+        options.addOption(listPlugins());
         return options;
     }
 
@@ -142,6 +155,13 @@ public class CliArgsParser {
         return Option.builder()
                 .longOpt(DEBUG_OPT)
                 .desc("enable debug mode")
+                .build();
+    }
+
+    private Option listPlugins() {
+        return Option.builder()
+                .longOpt(LIST_PLUGINS_OPT)
+                .desc("list available plugins")
                 .build();
     }
 }
