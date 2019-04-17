@@ -45,7 +45,7 @@ public class WebViewPlugin extends JavaPlugin {
     private void issueSettingsMethod(MethodCallExpr methodCall, String descriptionCode) {
         Expression firstArg = methodCall.getArguments().get(0);
         if (firstArg.isBooleanLiteralExpr() && firstArg.asBooleanLiteralExpr().getValue()) {
-            addIssue(Severity.INFO, descriptionCode, getLineNumberFromExpression(methodCall), methodCall.toString());
+            addIssue(Severity.WARNING, descriptionCode, getLineNumberFromExpression(methodCall), methodCall.toString());
         }
     }
 }

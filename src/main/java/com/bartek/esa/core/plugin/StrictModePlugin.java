@@ -24,6 +24,6 @@ public class StrictModePlugin extends JavaPlugin {
         compilationUnit.findAll(MethodCallExpr.class).stream()
                 .filter(expr -> expr.getName().getIdentifier().equals("setThreadPolicy"))
                 .filter(staticScopeHelper.isFromScope(compilationUnit, "setThreadPolicy", "StrictMode", "android.os"))
-                .forEach(expr -> addIssue(Severity.INFO, getLineNumberFromExpression(expr), expr.toString()));
+                .forEach(expr -> addIssue(Severity.WARNING, getLineNumberFromExpression(expr), expr.toString()));
     }
 }
