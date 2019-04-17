@@ -137,4 +137,10 @@ public class PluginModule {
     public Plugin orderedAndStickyBroadcastPlugin(GlobMatcher globMatcher, XmlHelper xmlHelper) {
         return new OrderedBroadcastPlugin(globMatcher, xmlHelper);
     }
+
+    @Provides
+    @IntoSet
+    public Plugin webViewPlugin(GlobMatcher globMatcher, XmlHelper xmlHelper) {
+        return new WebViewPlugin(globMatcher, xmlHelper);
+    }
 }
