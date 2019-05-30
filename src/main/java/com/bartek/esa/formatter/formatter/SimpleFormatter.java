@@ -1,10 +1,12 @@
 package com.bartek.esa.formatter.formatter;
 
 import com.bartek.esa.core.desc.provider.DescriptionProvider;
+import com.bartek.esa.core.model.enumeration.Severity;
 import com.bartek.esa.core.model.object.Issue;
 import com.bartek.esa.formatter.archetype.Formatter;
 
 import javax.inject.Inject;
+import java.util.Arrays;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -30,6 +32,7 @@ public class SimpleFormatter implements Formatter {
                 .collect(Collectors.joining());
 
         System.out.println(format.substring(0, format.length() - 2));
+        System.out.println(printSummary(issues));
     }
 
     private String format(Issue issue) {
@@ -70,5 +73,24 @@ public class SimpleFormatter implements Formatter {
                     );
                     format.append(line).append("\n");
                 });
+    }
+
+    private String printSummary(Set<Issue> issues) {
+        StringBuilder format = new StringBuilder();
+        format.append("\n--- Total:\n");
+        Arrays.stream(Severity.values())
+                .forEach(severity -> format
+                        .append(severity.name())
+                        .append(": ")
+                        .append(countIssuesBySeverity(issues, severity))
+                        .append("\n"));
+        return format.toString();
+    }
+
+    private long countIssuesBySeverity(Set<Issue> issues, Severity severity) {
+        return issues.stream()
+                .map(Issue::getSeverity)
+                .filter(severity::equals)
+                .count();
     }
 }

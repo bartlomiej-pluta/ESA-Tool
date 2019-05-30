@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 
 import java.io.File;
+import java.util.Map;
+import java.util.Optional;
 
 @Data
 @Builder
@@ -12,6 +14,7 @@ public class Issue implements Comparable {
     private final Class<?> issuer;
     private final Severity severity;
     private final String descriptionCode;
+    private final Map<String, String> descriptionModel;
     private final File file;
     private final Integer lineNumber;
     private final String line;
@@ -25,6 +28,6 @@ public class Issue implements Comparable {
             return compByFile;
         }
 
-        return lineNumber - another.lineNumber;
+        return Optional.ofNullable(lineNumber).orElse(0) - Optional.ofNullable(another.lineNumber).orElse(0);
     }
 }

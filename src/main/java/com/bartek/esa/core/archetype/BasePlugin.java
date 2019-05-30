@@ -5,7 +5,9 @@ import com.bartek.esa.core.model.object.Issue;
 import org.w3c.dom.Document;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 public abstract class BasePlugin implements Plugin {
@@ -32,11 +34,21 @@ public abstract class BasePlugin implements Plugin {
         addIssue(severity, "", lineNumber, line);
     }
 
+    protected void addIssue(Severity severity, Map<String, String> descriptionModel, Integer lineNumber, String line) {
+        addIssue(severity, "", descriptionModel, lineNumber, line);
+    }
+
+
     protected void addIssue(Severity severity, String descriptionCode, Integer lineNumber, String line) {
+        addIssue(severity, descriptionCode, new HashMap<>(), lineNumber, line);
+    }
+
+    protected void addIssue(Severity severity, String descriptionCode, Map<String, String> descriptionModel, Integer lineNumber, String line) {
         Issue issue = Issue.builder()
                 .severity(severity)
                 .issuer(this.getClass())
                 .descriptionCode(descriptionCode)
+                .descriptionModel(descriptionModel)
                 .file(file)
                 .lineNumber(lineNumber)
                 .line(line)

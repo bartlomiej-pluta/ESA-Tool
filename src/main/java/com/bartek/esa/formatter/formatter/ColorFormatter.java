@@ -1,6 +1,7 @@
 package com.bartek.esa.formatter.formatter;
 
 import com.bartek.esa.core.desc.provider.DescriptionProvider;
+import com.bartek.esa.core.model.enumeration.Severity;
 import com.bartek.esa.core.model.object.Issue;
 import com.bartek.esa.formatter.archetype.Formatter;
 import org.fusesource.jansi.Ansi;
@@ -16,6 +17,10 @@ import static org.fusesource.jansi.Ansi.Color.*;
 import static org.fusesource.jansi.Ansi.ansi;
 
 public class ColorFormatter implements Formatter {
+    private static final Ansi.Color INFO_COLOR = GREEN;
+    private static final Ansi.Color WARNING_COLOR = YELLOW;
+    private static final Ansi.Color ERROR_COLOR = MAGENTA;
+    private static final Ansi.Color VULNERABILITY_COLOR = RED;
 
     private final DescriptionProvider descriptionProvider;
 
@@ -39,6 +44,7 @@ public class ColorFormatter implements Formatter {
                 .collect(Collectors.joining());
 
         System.out.println(format.substring(0, format.length() - 2));
+        System.out.println(printSummary(issues));
         AnsiConsole.systemUninstall();
     }
 
@@ -73,8 +79,9 @@ public class ColorFormatter implements Formatter {
                 .map(file -> ansi
                         .fg(BLUE)
                         .a("File: ")
-                        .reset()
+                        .fg(CYAN)
                         .a(file.getAbsolutePath())
+                        .reset()
                         .a("\n"))
                 .orElse(ansi);
     }
@@ -86,16 +93,40 @@ public class ColorFormatter implements Formatter {
                             .fg(CYAN)
                             .a("Line");
                     Optional.ofNullable(issue.getLineNumber()).ifPresentOrElse(
-                            number -> ansi.a(" ").a(number).a(": "),
+                            number -> ansi.a(" ").fg(MAGENTA).a(number).fg(CYAN).a(": "),
                             () -> ansi.a(": ")
                     );
-                    ansi.reset().a(line).a("\n");
+                    ansi.fg(BLUE).a(line).reset().a("\n");
                 });
         return ansi;
     }
 
+    private String printSummary(Set<Issue> issues) {
+        Ansi ansi = ansi();
+        ansi.a("\n--- Total:\n");
+        Arrays.stream(Severity.values())
+                .forEach(severity -> ansi.fg(getColorForSeverity(severity))
+                        .a(severity.name())
+                        .a(": ")
+                        .reset()
+                        .a(countIssuesBySeverity(issues, severity))
+                        .a("\n"));
+        return ansi.toString();
+    }
+
+    private long countIssuesBySeverity(Set<Issue> issues, Severity severity) {
+        return issues.stream()
+                .map(Issue::getSeverity)
+                .filter(severity::equals)
+                .count();
+    }
+
     private Ansi.Color getColorForSeverity(Issue issue) {
-        switch (issue.getSeverity()) {
+        return getColorForSeverity(issue.getSeverity());
+    }
+
+    private Ansi.Color getColorForSeverity(Severity severity) {
+        switch (severity) {
             case INFO:
                 return GREEN;
             case WARNING:

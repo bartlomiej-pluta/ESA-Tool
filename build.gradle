@@ -23,7 +23,8 @@ dependencies {
     compile "com.github.javaparser:javaparser-core:${javaParserVersion}"
     compile "commons-io:commons-io:${commonsIoVersion}"
     compile "org.fusesource.jansi:jansi:${jansiVersion}"
-
+    compile "org.apache.commons:commons-lang3:${commonsLangVersion}"
+    compile "org.apache.commons:commons-text:${commonsTextVersion}"
 }
 
 jar {

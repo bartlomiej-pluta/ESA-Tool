@@ -1,8 +1,9 @@
 package com.bartek.esa.core.java;
 
-import javax.inject.Inject;
+import com.github.javaparser.ast.expr.Expression;
 
-import static java.lang.String.format;
+import javax.inject.Inject;
+import java.util.regex.Pattern;
 
 public class JavaSyntaxRegexProvider {
 
@@ -11,7 +12,20 @@ public class JavaSyntaxRegexProvider {
 
     }
 
-    public String methodInvocation(String methodName) {
-        return format("^%s\\s*\\($", methodName);
+    public Pattern constant() {
+        return Pattern.compile("^[A-Z0-9_$]*$");
+    }
+
+    public boolean isConstant(Expression expression) {
+        String value = expression.toString();
+        if(expression.isNameExpr() && constant().matcher(value).matches()) {
+            return true;
+        }
+
+        if(expression.isFieldAccessExpr()) {
+            return constant().matcher(expression.asFieldAccessExpr().getName().getIdentifier()).matches();
+        }
+
+        return false;
     }
 }

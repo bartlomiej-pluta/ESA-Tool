@@ -21,7 +21,7 @@ public class PluginExecutor {
 
     public Set<Issue> executeForFiles(File manifest, Set<File> files, Set<Plugin> plugins, boolean debug) {
         return files.stream()
-                .peek(file -> { if(debug) System.out.printf("File: %s", file.getAbsolutePath()); })
+                .peek(file -> { if(debug) System.out.printf("File: %s\n", file.getAbsolutePath()); })
                 .map(file -> executeForFile(manifest, file, plugins, debug))
                 .flatMap(Set::stream)
                 .collect(toSet());
@@ -29,8 +29,8 @@ public class PluginExecutor {
 
     private Set<Issue> executeForFile(File manifest, File file, Set<Plugin> plugins, boolean debug) {
         Document xmlManifest = xmlHelper.parseXml(manifest);
-        return plugins.parallelStream()
-                .peek(plugin -> { if(debug) System.out.printf(" Plugin: %s", plugin.getClass().getCanonicalName()); })
+        return plugins.stream()
+                .peek(plugin -> { if(debug) System.out.printf(" Plugin: %s\n", plugin.getClass().getCanonicalName()); })
                 .peek(plugin -> plugin.update(file, xmlManifest))
                 .filter(plugin -> plugin.supports(file))
                 .map(Plugin::runForIssues)
