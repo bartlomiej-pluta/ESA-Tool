@@ -5,5 +5,7 @@ import com.bartek.esa.core.model.object.Issue;
 import java.util.Set;
 
 public interface Formatter {
-    void format(Set<Issue> issues);
+    void beforeFormat();
+    String format(Set<Issue> issues);
+    void afterFormat();
 }

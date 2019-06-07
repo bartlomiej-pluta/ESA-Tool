@@ -8,4 +8,5 @@ ext {
   jansiVersion = '1.17.1'
   commonsLangVersion = '3.8.1'
   commonsTextVersion = '1.6'
+  jacksonVersion = '2.9.8'
 }

@@ -2,6 +2,7 @@ package com.bartek.esa.formatter.di;
 
 import com.bartek.esa.core.desc.provider.DescriptionProvider;
 import com.bartek.esa.formatter.formatter.ColorFormatter;
+import com.bartek.esa.formatter.formatter.JsonFormatter;
 import com.bartek.esa.formatter.formatter.SimpleFormatter;
 import com.bartek.esa.formatter.provider.FormatterProvider;
 import dagger.Module;
@@ -21,7 +22,12 @@ public class FormatterModule {
     }
 
     @Provides
-    public FormatterProvider formatterProvider(SimpleFormatter simpleFormatter, ColorFormatter colorFormatter) {
-        return new FormatterProvider(simpleFormatter, colorFormatter);
+    public JsonFormatter jsonFormatter() {
+        return new JsonFormatter();
+    }
+
+    @Provides
+    public FormatterProvider formatterProvider(SimpleFormatter simpleFormatter, ColorFormatter colorFormatter, JsonFormatter jsonFormatter) {
+        return new FormatterProvider(simpleFormatter, colorFormatter, jsonFormatter);
     }
 }

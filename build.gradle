@@ -25,6 +25,7 @@ dependencies {
     compile "org.fusesource.jansi:jansi:${jansiVersion}"
     compile "org.apache.commons:commons-lang3:${commonsLangVersion}"
     compile "org.apache.commons:commons-text:${commonsTextVersion}"
+    compile "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}"
 }
 
 jar {
