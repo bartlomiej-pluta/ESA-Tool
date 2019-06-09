@@ -86,8 +86,8 @@ public class PluginModule {
 
     @Provides
     @IntoSet
-    public Plugin externalStoragePlugin(ParentNodeFinder parentNodeFinder) {
-        return new ExternalStoragePlugin(parentNodeFinder);
+    public Plugin externalStoragePlugin(ParentNodeFinder parentNodeFinder, StaticScopeHelper staticScopeHelper) {
+        return new ExternalStoragePlugin(parentNodeFinder, staticScopeHelper);
     }
 
     @Provides
