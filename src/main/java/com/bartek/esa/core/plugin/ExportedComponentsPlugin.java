@@ -1,11 +1,10 @@
 package com.bartek.esa.core.plugin;
 
 import com.bartek.esa.context.model.Context;
-import com.bartek.esa.context.model.Source;
 import com.bartek.esa.core.archetype.BasePlugin;
 import com.bartek.esa.core.model.enumeration.Severity;
 import com.bartek.esa.core.xml.XmlHelper;
-import com.github.javaparser.ast.CompilationUnit;
+import com.bartek.esa.file.matcher.PackageNameMatcher;
 import com.github.javaparser.ast.expr.MethodCallExpr;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -14,16 +13,17 @@ import javax.inject.Inject;
 import javax.xml.xpath.XPathConstants;
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.Predicate;
 
 import static java.lang.String.format;
 
 public class ExportedComponentsPlugin extends BasePlugin {
     private final XmlHelper xmlHelper;
+    private final PackageNameMatcher packageNameMatcher;
 
     @Inject
-    public ExportedComponentsPlugin(XmlHelper xmlHelper) {
+    public ExportedComponentsPlugin(XmlHelper xmlHelper, PackageNameMatcher packageNameMatcher) {
         this.xmlHelper = xmlHelper;
+        this.packageNameMatcher = packageNameMatcher;
     }
 
     @Override
@@ -52,7 +52,7 @@ public class ExportedComponentsPlugin extends BasePlugin {
 
     private boolean isIntentDataBeingUsedInsideComponent(Context context, String componentCanonicalName) {
         return context.getJavaSources().stream()
-                .filter(doesMatchCanonicalName(componentCanonicalName))
+                .filter(java -> packageNameMatcher.doesFileMatchPackageName(java.getFile(), componentCanonicalName))
                 .flatMap(java -> java.getModel().findAll(MethodCallExpr.class).stream())
                 .filter(expr -> expr.getName().getIdentifier().equals("getIntent"))
                 .anyMatch(expr -> expr.getArguments().isEmpty());
@@ -87,9 +87,5 @@ public class ExportedComponentsPlugin extends BasePlugin {
                 .map(Node::getNodeValue)
                 .map(v -> v.equals("true"))
                 .orElse(false);
-    }
-
-    private Predicate<Source<CompilationUnit>> doesMatchCanonicalName(String canonicalName) {
-        return source -> source.getFile().getAbsolutePath().replaceAll("/", ".").contains(canonicalName);
     }
 }

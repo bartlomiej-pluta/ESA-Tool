@@ -1,31 +1,51 @@
 package com.bartek.esa.core.plugin;
 
-import com.bartek.esa.context.model.Source;
-import com.bartek.esa.core.archetype.AndroidManifestPlugin;
+import com.bartek.esa.context.model.Context;
+import com.bartek.esa.core.archetype.BasePlugin;
 import com.bartek.esa.core.model.enumeration.Severity;
 import com.bartek.esa.core.xml.XmlHelper;
-import org.w3c.dom.Document;
+import com.bartek.esa.file.matcher.PackageNameMatcher;
+import com.github.javaparser.ast.expr.MethodCallExpr;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import javax.inject.Inject;
 import java.util.Map;
+import java.util.Optional;
 
-public class IntentFilterPlugin extends AndroidManifestPlugin {
+public class IntentFilterPlugin extends BasePlugin {
     private final XmlHelper xmlHelper;
+    private final PackageNameMatcher packageNameMatcher;
 
     @Inject
-    public IntentFilterPlugin(XmlHelper xmlHelper) {
+    public IntentFilterPlugin(XmlHelper xmlHelper, PackageNameMatcher packageNameMatcher) {
         this.xmlHelper = xmlHelper;
+        this.packageNameMatcher = packageNameMatcher;
     }
 
     @Override
-    protected void run(Source<Document> manifest) {
-        NodeList filters = manifest.getModel().getElementsByTagName("intent-filter");
+    protected void run(Context context) {
+        NodeList filters = context.getManifest().getModel().getElementsByTagName("intent-filter");
         xmlHelper.stream(filters)
                 .filter(this::isNotMainActivity)
+                .filter(this::isNotExported)
                 .map(Node::getParentNode)
-                .forEach(n -> addIssue(Severity.INFO, getModel(n), manifest.getFile(), null, null));
+                .forEach(node -> {
+                    String componentName = node.getAttributes().getNamedItem("android:name").getNodeValue();
+                    String canonicalName = context.getPackageName() + componentName;
+                    if (isIntentDataBeingUsedInsideComponent(context, canonicalName)) {
+                        addIssue(Severity.WARNING, ".DATA_USAGE", getModel(node), context.getManifest().getFile(), null, null);
+                    } else {
+                        addIssue(Severity.WARNING, getModel(node), context.getManifest().getFile(), null, null);
+                    }
+                });
+    }
+
+    private boolean isNotExported(Node component) {
+        return !Optional.ofNullable(component.getAttributes().getNamedItem("android:exported"))
+                .map(Node::getNodeValue)
+                .map(Boolean::parseBoolean)
+                .orElse(false);
     }
 
     private Map<String, String> getModel(Node node) {
@@ -37,16 +57,24 @@ public class IntentFilterPlugin extends AndroidManifestPlugin {
 
     private boolean isNotMainActivity(Node filter) {
         long mainActivityIntentFilters = xmlHelper.stream(filter.getChildNodes())
-                .filter(n -> n.getNodeName().matches("action|category"))
+                .filter(n -> n.getNodeName().matches("action|category|data"))
                 .map(n -> n.getAttributes().getNamedItem("android:name"))
                 .map(Node::getNodeValue)
                 .filter(v -> v.equals("android.intent.action.MAIN") || v.equals("android.intent.category.LAUNCHER"))
                 .count();
 
         long currentIntentFilters = xmlHelper.stream(filter.getChildNodes())
-                .filter(n -> n.getNodeName().matches("action|category"))
+                .filter(n -> n.getNodeName().matches("action|category|data"))
                 .count();
 
         return mainActivityIntentFilters != currentIntentFilters;
+    }
+
+    private boolean isIntentDataBeingUsedInsideComponent(Context context, String componentCanonicalName) {
+        return context.getJavaSources().stream()
+                .filter(java -> packageNameMatcher.doesFileMatchPackageName(java.getFile(), componentCanonicalName))
+                .flatMap(java -> java.getModel().findAll(MethodCallExpr.class).stream())
+                .filter(expr -> expr.getName().getIdentifier().equals("getIntent"))
+                .anyMatch(expr -> expr.getArguments().isEmpty());
     }
 }

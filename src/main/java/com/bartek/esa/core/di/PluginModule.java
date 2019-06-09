@@ -7,6 +7,7 @@ import com.bartek.esa.core.helper.StringConcatenationChecker;
 import com.bartek.esa.core.java.JavaSyntaxRegexProvider;
 import com.bartek.esa.core.plugin.*;
 import com.bartek.esa.core.xml.XmlHelper;
+import com.bartek.esa.file.matcher.PackageNameMatcher;
 import dagger.Module;
 import dagger.Provides;
 import dagger.multibindings.ElementsIntoSet;
@@ -98,8 +99,8 @@ public class PluginModule {
 
     @Provides
     @IntoSet
-    public Plugin exportedComponentsPlugin(XmlHelper xmlHelper) {
-        return new ExportedComponentsPlugin(xmlHelper);
+    public Plugin exportedComponentsPlugin(XmlHelper xmlHelper, PackageNameMatcher packageNameMatcher) {
+        return new ExportedComponentsPlugin(xmlHelper, packageNameMatcher);
     }
 
     @Provides
@@ -116,8 +117,8 @@ public class PluginModule {
 
     @Provides
     @IntoSet
-    public Plugin intentFilterPlugin(XmlHelper xmlHelper) {
-        return new IntentFilterPlugin(xmlHelper);
+    public Plugin intentFilterPlugin(XmlHelper xmlHelper, PackageNameMatcher packageNameMatcher) {
+        return new IntentFilterPlugin(xmlHelper, packageNameMatcher);
     }
 
     @Provides

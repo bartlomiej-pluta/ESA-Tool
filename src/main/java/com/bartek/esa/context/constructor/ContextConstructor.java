@@ -4,7 +4,7 @@ import com.bartek.esa.context.model.Context;
 import com.bartek.esa.context.model.Source;
 import com.bartek.esa.core.xml.XmlHelper;
 import com.bartek.esa.error.EsaException;
-import com.bartek.esa.file.matcher.GlobMatcher;
+import com.bartek.esa.file.matcher.PackageNameMatcher;
 import com.github.javaparser.ParseProblemException;
 import com.github.javaparser.Problem;
 import com.github.javaparser.StaticJavaParser;
@@ -18,19 +18,18 @@ import javax.xml.xpath.XPathConstants;
 import java.io.File;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.Predicate;
 
 import static java.lang.String.format;
 import static java.util.stream.Collectors.toSet;
 
 public class ContextConstructor {
     private final XmlHelper xmlHelper;
-    private final GlobMatcher globMatcher;
+    private final PackageNameMatcher packageNameMatcher;
 
     @Inject
-    public ContextConstructor(XmlHelper xmlHelper, GlobMatcher globMatcher) {
+    public ContextConstructor(XmlHelper xmlHelper, PackageNameMatcher packageNameMatcher) {
         this.xmlHelper = xmlHelper;
-        this.globMatcher = globMatcher;
+        this.packageNameMatcher = packageNameMatcher;
     }
 
     public Context construct(File androidManifestFile, Set<File> javaFiles, Set<File> layoutFiles) {
@@ -76,17 +75,10 @@ public class ContextConstructor {
 
     private Set<Source<CompilationUnit>> parseJavaFiles(Set<File> javaFiles, String packageName) {
         return javaFiles.stream()
-                .filter(isApplicationPackageFile(packageName))
+                .filter(file -> packageNameMatcher.doesFileMatchPackageName(file, packageName))
                 .map(file -> new Source<>(file, parseJava(file)))
                 .filter(s -> s.getModel() != null)
                 .collect(toSet());
-    }
-
-    private Predicate<File> isApplicationPackageFile(String packageName) {
-        return file -> {
-            String path = packageName.replaceAll("\\.", "/");
-            return globMatcher.fileMatchesGlobPattern(file, format("**/%s/**", path));
-        };
     }
 
     private CompilationUnit parseJava(File javaFile) {
