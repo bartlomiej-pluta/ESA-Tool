@@ -1,9 +1,9 @@
 package com.bartek.esa.core.plugin;
 
+import com.bartek.esa.context.model.Source;
 import com.bartek.esa.core.archetype.AndroidManifestPlugin;
 import com.bartek.esa.core.model.enumeration.Severity;
 import com.bartek.esa.core.xml.XmlHelper;
-import com.bartek.esa.file.matcher.GlobMatcher;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -16,26 +16,27 @@ import java.util.Optional;
 import static java.lang.String.format;
 
 public class ExportedComponentsPlugin extends AndroidManifestPlugin {
+    private final XmlHelper xmlHelper;
 
     @Inject
-    public ExportedComponentsPlugin(GlobMatcher globMatcher, XmlHelper xmlHelper) {
-        super(globMatcher, xmlHelper);
+    public ExportedComponentsPlugin(XmlHelper xmlHelper) {
+        this.xmlHelper = xmlHelper;
     }
 
     @Override
-    protected void run(Document xml) {
-        findExportedComponents(xml, "activity");
-        findExportedComponents(xml, "service");
-        findExportedComponents(xml, "receiver");
-        findExportedProviders(xml);
+    protected void run(Source<Document> manifest) {
+        findExportedComponents(manifest, "activity");
+        findExportedComponents(manifest, "service");
+        findExportedComponents(manifest, "receiver");
+        findExportedProviders(manifest);
     }
 
-    private void findExportedComponents(Document xml, String component) {
-        NodeList exportedActivities = (NodeList) xPath(xml, format("/manifest/application/%s", component), XPathConstants.NODESET);
-        stream(exportedActivities)
+    private void findExportedComponents(Source<Document> manifest, String component) {
+        NodeList exportedActivities = (NodeList) xmlHelper.xPath(manifest.getModel(), format("/manifest/application/%s", component), XPathConstants.NODESET);
+        xmlHelper.stream(exportedActivities)
                 .filter(this::isExported)
                 .filter(node -> doesNotHavePermission(node, "android:permission"))
-                .forEach(node -> addIssue(Severity.WARNING, ".NO_PERMISSION", getModel(node), null, null));
+                .forEach(node -> addIssue(Severity.WARNING, ".NO_PERMISSION", getModel(node), manifest.getFile(), null, null));
     }
 
     private Map<String, String> getModel(Node node) {
@@ -45,13 +46,13 @@ public class ExportedComponentsPlugin extends AndroidManifestPlugin {
         );
     }
 
-    private void findExportedProviders(Document xml) {
-        NodeList exportedProviders = (NodeList) xPath(xml, "/manifest/application/provider", XPathConstants.NODESET);
-        stream(exportedProviders)
+    private void findExportedProviders(Source<Document> manifest) {
+        NodeList exportedProviders = (NodeList) xmlHelper.xPath(manifest.getModel(), "/manifest/application/provider", XPathConstants.NODESET);
+        xmlHelper.stream(exportedProviders)
                 .filter(this::isExported)
                 .filter(node -> doesNotHavePermission(node, "android:writePermission")
                         || doesNotHavePermission(node, "android:readPermission"))
-                .forEach(node -> addIssue(Severity.WARNING, ".NO_PERMISSION", getModel(node), null, null));
+                .forEach(node -> addIssue(Severity.WARNING, ".NO_PERMISSION", getModel(node), manifest.getFile(), null, null));
     }
 
     private boolean doesNotHavePermission(Node node, String permissionAttribute) {
@@ -69,6 +70,7 @@ public class ExportedComponentsPlugin extends AndroidManifestPlugin {
                 .orElse(false);
     }
 
+    // todo remove it!
     private String nodeToString(Node node) {
         String nodeName = Optional.ofNullable(node.getAttributes().getNamedItem("android:name"))
                 .map(Node::getNodeValue)

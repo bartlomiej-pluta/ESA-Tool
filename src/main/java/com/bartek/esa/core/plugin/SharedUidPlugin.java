@@ -1,9 +1,9 @@
 package com.bartek.esa.core.plugin;
 
+import com.bartek.esa.context.model.Source;
 import com.bartek.esa.core.archetype.AndroidManifestPlugin;
 import com.bartek.esa.core.model.enumeration.Severity;
 import com.bartek.esa.core.xml.XmlHelper;
-import com.bartek.esa.file.matcher.GlobMatcher;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
@@ -12,17 +12,18 @@ import javax.xml.xpath.XPathConstants;
 import java.util.Optional;
 
 public class SharedUidPlugin extends AndroidManifestPlugin {
+    private final XmlHelper xmlHelper;
 
     @Inject
-    public SharedUidPlugin(GlobMatcher globMatcher, XmlHelper xmlHelper) {
-        super(globMatcher, xmlHelper);
+    public SharedUidPlugin(XmlHelper xmlHelper) {
+        this.xmlHelper = xmlHelper;
     }
 
     @Override
-    protected void run(Document xml) {
-        Node manifestNode = (Node) xPath(xml, "/manifest", XPathConstants.NODE);
+    protected void run(Source<Document> manifest) {
+        Node manifestNode = (Node) xmlHelper.xPath(manifest.getModel(), "/manifest", XPathConstants.NODE);
         Optional.ofNullable(manifestNode.getAttributes().getNamedItem("android:sharedUserId")).ifPresent(node -> {
-            addIssue(Severity.VULNERABILITY, null, node.toString());
+            addIssue(Severity.VULNERABILITY, manifest.getFile(), null, node.toString());
         });
     }
 }

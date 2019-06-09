@@ -1,5 +1,7 @@
 package com.bartek.esa.analyser.core;
 
+import com.bartek.esa.context.constructor.ContextConstructor;
+import com.bartek.esa.context.model.Context;
 import com.bartek.esa.core.archetype.Plugin;
 import com.bartek.esa.core.executor.PluginExecutor;
 import com.bartek.esa.core.model.object.Issue;
@@ -7,31 +9,34 @@ import com.bartek.esa.error.EsaException;
 import com.bartek.esa.file.provider.FileProvider;
 
 import java.io.File;
-import java.util.Collections;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public abstract class Analyser {
     private final PluginExecutor pluginExecutor;
     private final Set<Plugin> plugins;
     private final FileProvider fileProvider;
+    private final ContextConstructor contextConstructor;
 
-    public Analyser(PluginExecutor pluginExecutor, Set<Plugin> plugins, FileProvider fileProvider) {
+    public Analyser(PluginExecutor pluginExecutor, Set<Plugin> plugins, FileProvider fileProvider, ContextConstructor contextConstructor) {
 
         this.pluginExecutor = pluginExecutor;
         this.plugins = plugins;
         this.fileProvider = fileProvider;
+        this.contextConstructor = contextConstructor;
     }
 
     public Set<Issue> analyse(String source, Set<String> pluginCodes, Set<String> excludeCodes, boolean debug) {
         String newSource = prepareSources(source, debug);
         File manifest = getManifest(newSource);
-        Set<File> files = getFiles(newSource);
-        Set<Plugin> selectedPlugins = getPlugins(pluginCodes, excludeCodes);
+        Set<File> javaSources = getJavaSources(newSource);
+        Set<File> layoutFiles = getLayoutFiles(newSource);
+        Context context = contextConstructor.construct(manifest, javaSources, layoutFiles);
 
-        Set<Issue> issues = pluginExecutor.executeForFiles(manifest, files, selectedPlugins, debug);
+        Set<Plugin> selectedPlugins = getPlugins(pluginCodes, excludeCodes);
+        Set<Issue> issues = pluginExecutor.executeForContext(context, selectedPlugins, debug);
+
         performCleaning(newSource, debug);
         return issues;
     }
@@ -60,14 +65,12 @@ public abstract class Analyser {
         return (File) (manifests.toArray())[0];
     }
 
-    private Set<File> getFiles(String source) {
-        Set<File> javaFiles = fileProvider.getGlobMatchedFiles(source, getJavaGlob());
-        Set<File> layoutFiles = fileProvider.getGlobMatchedFiles(source, getLayoutGlob());
-        Set<File> androidManifest = Collections.singleton(getManifest(source));
+    private Set<File> getJavaSources(String source) {
+        return fileProvider.getGlobMatchedFiles(source, getJavaGlob());
+    }
 
-        return Stream.of(javaFiles, androidManifest, layoutFiles)
-                .flatMap(Set::stream)
-                .collect(Collectors.toSet());
+    private Set<File> getLayoutFiles(String source) {
+        return fileProvider.getGlobMatchedFiles(source, getLayoutGlob());
     }
 
     private Set<Plugin> getPlugins(Set<String> pluginCodes, Set<String> excludeCodes) {

@@ -1,44 +1,45 @@
 package com.bartek.esa.core.plugin;
 
+import com.bartek.esa.context.model.Source;
 import com.bartek.esa.core.archetype.JavaPlugin;
 import com.bartek.esa.core.helper.ParentNodeFinder;
 import com.bartek.esa.core.model.enumeration.Severity;
-import com.bartek.esa.core.xml.XmlHelper;
-import com.bartek.esa.file.matcher.GlobMatcher;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.expr.MethodCallExpr;
 
 import javax.inject.Inject;
+import java.util.function.Consumer;
 
 public class ExternalStoragePlugin extends JavaPlugin {
     private final ParentNodeFinder parentNodeFinder;
 
     @Inject
-    public ExternalStoragePlugin(GlobMatcher globMatcher, XmlHelper xmlHelper, ParentNodeFinder parentNodeFinder) {
-        super(globMatcher, xmlHelper);
+    public ExternalStoragePlugin(ParentNodeFinder parentNodeFinder) {
         this.parentNodeFinder = parentNodeFinder;
     }
 
     @Override
-    public void run(CompilationUnit compilationUnit) {
-        compilationUnit.findAll(MethodCallExpr.class).stream()
+    public void run(Source<CompilationUnit> java) {
+        java.getModel().findAll(MethodCallExpr.class).stream()
                 .filter(expr -> expr.getName().getIdentifier().matches("getExternalStorageDirectory|getExternalStoragePublicDirectory"))
-                .forEach(this::findCheckingStorageStateForAccessingExternalStorage);
+                .forEach(findCheckingStorageStateForAccessingExternalStorage(java));
     }
 
-    private void findCheckingStorageStateForAccessingExternalStorage(MethodCallExpr accessingToExternalStorage) {
-        parentNodeFinder.findParentNode(accessingToExternalStorage, MethodDeclaration.class).ifPresent(methodDeclaration ->
-                findCheckingStorageStateInMethodDeclaration(accessingToExternalStorage, methodDeclaration)
-        );
+    private Consumer<MethodCallExpr> findCheckingStorageStateForAccessingExternalStorage(Source<CompilationUnit> java) {
+        return accessingToExternalStorage -> parentNodeFinder
+                .findParentNode(accessingToExternalStorage, MethodDeclaration.class)
+                .ifPresent(methodDeclaration ->
+                        findCheckingStorageStateInMethodDeclaration(java, accessingToExternalStorage, methodDeclaration)
+                );
     }
 
-    private void findCheckingStorageStateInMethodDeclaration(MethodCallExpr accessingToExternalStorage, MethodDeclaration methodDeclaration) {
+    private void findCheckingStorageStateInMethodDeclaration(Source<CompilationUnit> java, MethodCallExpr accessingToExternalStorage, MethodDeclaration methodDeclaration) {
         boolean isStateBeingChecked = methodDeclaration.findAll(MethodCallExpr.class).stream()
                 .anyMatch(e -> e.getName().getIdentifier().equals("getExternalStorageState"));
 
         if (!isStateBeingChecked) {
-            addIssue(Severity.WARNING, getLineNumberFromExpression(accessingToExternalStorage), accessingToExternalStorage.toString());
+            addJavaIssue(Severity.WARNING, java.getFile(), accessingToExternalStorage);
         }
     }
 }

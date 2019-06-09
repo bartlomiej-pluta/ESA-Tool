@@ -1,32 +1,25 @@
 package com.bartek.esa.core.plugin;
 
+import com.bartek.esa.context.model.Source;
 import com.bartek.esa.core.archetype.JavaPlugin;
 import com.bartek.esa.core.model.enumeration.Severity;
-import com.bartek.esa.core.xml.XmlHelper;
-import com.bartek.esa.file.matcher.GlobMatcher;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.expr.FieldAccessExpr;
 import com.github.javaparser.ast.expr.NameExpr;
 
-import javax.inject.Inject;
 import java.util.Map;
 
 public class WorldAccessPermissionsPlugin extends JavaPlugin {
 
-    @Inject
-    public WorldAccessPermissionsPlugin(GlobMatcher globMatcher, XmlHelper xmlHelper) {
-        super(globMatcher, xmlHelper);
-    }
-
     @Override
-    public void run(CompilationUnit compilationUnit) {
-        compilationUnit.findAll(NameExpr.class).stream()
+    public void run(Source<CompilationUnit> java) {
+        java.getModel().findAll(NameExpr.class).stream()
                 .filter(expr -> expr.getName().getIdentifier().matches("MODE_WORLD_(READABLE|WRITEABLE)"))
-                .forEach(expr -> addIssue(Severity.ERROR, getModel(expr), getLineNumberFromExpression(expr), expr.toString()));
+                .forEach(expr -> addJavaIssue(Severity.ERROR, getModel(expr), java.getFile(), expr));
 
-        compilationUnit.findAll(FieldAccessExpr.class).stream()
+        java.getModel().findAll(FieldAccessExpr.class).stream()
                 .filter(expr -> expr.getName().getIdentifier().matches("MODE_WORLD_(READABLE|WRITEABLE)"))
-                .forEach(expr -> addIssue(Severity.ERROR, getModel(expr), getLineNumberFromExpression(expr), expr.toString()));
+                .forEach(expr -> addJavaIssue(Severity.ERROR, getModel(expr), java.getFile(), expr));
     }
 
     private Map<String, String> getModel(NameExpr expression) {

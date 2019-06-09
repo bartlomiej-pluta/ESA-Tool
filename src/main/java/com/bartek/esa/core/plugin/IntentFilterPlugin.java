@@ -1,9 +1,9 @@
 package com.bartek.esa.core.plugin;
 
+import com.bartek.esa.context.model.Source;
 import com.bartek.esa.core.archetype.AndroidManifestPlugin;
 import com.bartek.esa.core.model.enumeration.Severity;
 import com.bartek.esa.core.xml.XmlHelper;
-import com.bartek.esa.file.matcher.GlobMatcher;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -12,19 +12,20 @@ import javax.inject.Inject;
 import java.util.Map;
 
 public class IntentFilterPlugin extends AndroidManifestPlugin {
+    private final XmlHelper xmlHelper;
 
     @Inject
-    public IntentFilterPlugin(GlobMatcher globMatcher, XmlHelper xmlHelper) {
-        super(globMatcher, xmlHelper);
+    public IntentFilterPlugin(XmlHelper xmlHelper) {
+        this.xmlHelper = xmlHelper;
     }
 
     @Override
-    protected void run(Document xml) {
-        NodeList filters = xml.getElementsByTagName("intent-filter");
-        stream(filters)
+    protected void run(Source<Document> manifest) {
+        NodeList filters = manifest.getModel().getElementsByTagName("intent-filter");
+        xmlHelper.stream(filters)
                 .filter(this::isNotMainActivity)
                 .map(Node::getParentNode)
-                .forEach(n -> addIssue(Severity.INFO, getModel(n), null, null));
+                .forEach(n -> addIssue(Severity.INFO, getModel(n), manifest.getFile(), null, null));
     }
 
     private Map<String, String> getModel(Node node) {
@@ -35,14 +36,14 @@ public class IntentFilterPlugin extends AndroidManifestPlugin {
     }
 
     private boolean isNotMainActivity(Node filter) {
-        long mainActivityIntentFilters = stream(filter.getChildNodes())
+        long mainActivityIntentFilters = xmlHelper.stream(filter.getChildNodes())
                 .filter(n -> n.getNodeName().matches("action|category"))
                 .map(n -> n.getAttributes().getNamedItem("android:name"))
                 .map(Node::getNodeValue)
                 .filter(v -> v.equals("android.intent.action.MAIN") || v.equals("android.intent.category.LAUNCHER"))
                 .count();
 
-        long currentIntentFilters = stream(filter.getChildNodes())
+        long currentIntentFilters = xmlHelper.stream(filter.getChildNodes())
                 .filter(n -> n.getNodeName().matches("action|category"))
                 .count();
 

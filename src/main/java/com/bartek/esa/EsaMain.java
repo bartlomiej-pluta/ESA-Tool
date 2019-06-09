@@ -17,7 +17,6 @@ import javax.inject.Inject;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
-import java.io.IOException;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;

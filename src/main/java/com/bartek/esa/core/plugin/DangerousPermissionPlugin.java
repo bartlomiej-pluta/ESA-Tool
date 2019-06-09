@@ -1,9 +1,9 @@
 package com.bartek.esa.core.plugin;
 
+import com.bartek.esa.context.model.Source;
 import com.bartek.esa.core.archetype.AndroidManifestPlugin;
 import com.bartek.esa.core.model.enumeration.Severity;
 import com.bartek.esa.core.xml.XmlHelper;
-import com.bartek.esa.file.matcher.GlobMatcher;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -13,19 +13,20 @@ import javax.xml.xpath.XPathConstants;
 import java.util.Optional;
 
 public class DangerousPermissionPlugin extends AndroidManifestPlugin {
+    private final XmlHelper xmlHelper;
 
     @Inject
-    public DangerousPermissionPlugin(GlobMatcher globMatcher, XmlHelper xmlHelper) {
-        super(globMatcher, xmlHelper);
+    public DangerousPermissionPlugin(XmlHelper xmlHelper) {
+        this.xmlHelper = xmlHelper;
     }
 
     @Override
-    protected void run(Document xml) {
-        NodeList customPermissions = (NodeList) xPath(xml, "/manifest/permission", XPathConstants.NODESET);
-        stream(customPermissions)
+    protected void run(Source<Document> manifest) {
+        NodeList customPermissions = (NodeList) xmlHelper.xPath(manifest.getModel(), "/manifest/permission", XPathConstants.NODESET);
+        xmlHelper.stream(customPermissions)
                 .filter(this::isDangerousPermission)
                 .filter(this::doesNotHaveDescription)
-                .forEach(permission -> addIssue(Severity.WARNING, null, tagString(permission)));
+                .forEach(permission -> addXmlIssue(Severity.WARNING, manifest.getFile(), permission));
     }
 
     private boolean isDangerousPermission(Node permission) {

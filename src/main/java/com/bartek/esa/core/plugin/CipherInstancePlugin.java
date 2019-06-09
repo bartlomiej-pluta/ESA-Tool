@@ -1,10 +1,9 @@
 package com.bartek.esa.core.plugin;
 
+import com.bartek.esa.context.model.Source;
 import com.bartek.esa.core.archetype.JavaPlugin;
 import com.bartek.esa.core.helper.StaticScopeHelper;
 import com.bartek.esa.core.model.enumeration.Severity;
-import com.bartek.esa.core.xml.XmlHelper;
-import com.bartek.esa.file.matcher.GlobMatcher;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.expr.MethodCallExpr;
 
@@ -16,19 +15,18 @@ public class CipherInstancePlugin extends JavaPlugin {
     private final StaticScopeHelper staticScopeHelper;
 
     @Inject
-    public CipherInstancePlugin(GlobMatcher globMatcher, XmlHelper xmlHelper, StaticScopeHelper staticScopeHelper) {
-        super(globMatcher, xmlHelper);
+    public CipherInstancePlugin(StaticScopeHelper staticScopeHelper) {
         this.staticScopeHelper = staticScopeHelper;
     }
 
     @Override
-    public void run(CompilationUnit compilationUnit) {
-        compilationUnit.findAll(MethodCallExpr.class).stream()
+    public void run(Source<CompilationUnit> java) {
+        java.getModel().findAll(MethodCallExpr.class).stream()
                 .filter(expr -> expr.getName().getIdentifier().equals("getInstance"))
-                .filter(staticScopeHelper.isFromScope(compilationUnit, "getInstance", "Cipher", "javax.crypto"))
+                .filter(staticScopeHelper.isFromScope(java.getModel(), "getInstance", "Cipher", "javax.crypto"))
                 .filter(expr -> expr.getArguments().isNonEmpty())
                 .filter(expr -> !isFullCipherQualifier(expr.getArguments().get(0).toString()))
-                .forEach(expr -> addIssue(Severity.ERROR, getLineNumberFromExpression(expr), expr.toString()));
+                .forEach(expr -> addJavaIssue(Severity.ERROR, java.getFile(), expr));
     }
 
     private boolean isFullCipherQualifier(String qualifier) {
