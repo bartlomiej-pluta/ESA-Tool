@@ -4,6 +4,7 @@ import com.bartek.esa.core.desc.provider.DescriptionProvider;
 import com.bartek.esa.core.executor.PluginExecutor;
 import com.bartek.esa.core.helper.ParentNodeFinder;
 import com.bartek.esa.core.helper.StaticScopeHelper;
+import com.bartek.esa.core.helper.StringConcatenationChecker;
 import com.bartek.esa.core.java.JavaSyntaxRegexProvider;
 import com.bartek.esa.core.xml.XmlHelper;
 import dagger.Module;
@@ -13,8 +14,8 @@ import dagger.Provides;
 public class CoreModule {
 
     @Provides
-    public PluginExecutor pluginExecutor(XmlHelper xmlHelper) {
-        return new PluginExecutor(xmlHelper);
+    public PluginExecutor pluginExecutor() {
+        return new PluginExecutor();
     }
 
     @Provides
@@ -35,6 +36,11 @@ public class CoreModule {
     @Provides
     public StaticScopeHelper staticScopeHelper() {
         return new StaticScopeHelper();
+    }
+
+    @Provides
+    public StringConcatenationChecker stringConcatenationChecker(StaticScopeHelper staticScopeHelper) {
+        return new StringConcatenationChecker(staticScopeHelper);
     }
 
     @Provides

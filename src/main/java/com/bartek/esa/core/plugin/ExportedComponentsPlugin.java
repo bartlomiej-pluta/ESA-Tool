@@ -1,10 +1,11 @@
 package com.bartek.esa.core.plugin;
 
-import com.bartek.esa.core.archetype.AndroidManifestPlugin;
+import com.bartek.esa.context.model.Context;
+import com.bartek.esa.core.archetype.BasePlugin;
 import com.bartek.esa.core.model.enumeration.Severity;
 import com.bartek.esa.core.xml.XmlHelper;
-import com.bartek.esa.file.matcher.GlobMatcher;
-import org.w3c.dom.Document;
+import com.bartek.esa.file.matcher.PackageNameMatcher;
+import com.github.javaparser.ast.expr.MethodCallExpr;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -15,27 +16,46 @@ import java.util.Optional;
 
 import static java.lang.String.format;
 
-public class ExportedComponentsPlugin extends AndroidManifestPlugin {
+public class ExportedComponentsPlugin extends BasePlugin {
+    private final XmlHelper xmlHelper;
+    private final PackageNameMatcher packageNameMatcher;
 
     @Inject
-    public ExportedComponentsPlugin(GlobMatcher globMatcher, XmlHelper xmlHelper) {
-        super(globMatcher, xmlHelper);
+    public ExportedComponentsPlugin(XmlHelper xmlHelper, PackageNameMatcher packageNameMatcher) {
+        this.xmlHelper = xmlHelper;
+        this.packageNameMatcher = packageNameMatcher;
     }
 
     @Override
-    protected void run(Document xml) {
-        findExportedComponents(xml, "activity");
-        findExportedComponents(xml, "service");
-        findExportedComponents(xml, "receiver");
-        findExportedProviders(xml);
+    protected void run(Context context) {
+        findExportedComponents(context, "activity");
+        findExportedComponents(context, "service");
+        findExportedComponents(context, "receiver");
+        findExportedProviders(context);
     }
 
-    private void findExportedComponents(Document xml, String component) {
-        NodeList exportedActivities = (NodeList) xPath(xml, format("/manifest/application/%s", component), XPathConstants.NODESET);
-        stream(exportedActivities)
+    private void findExportedComponents(Context context, String component) {
+        NodeList exportedActivities = (NodeList) xmlHelper.xPath(context.getManifest().getModel(), format("/manifest/application/%s", component), XPathConstants.NODESET);
+        xmlHelper.stream(exportedActivities)
                 .filter(this::isExported)
                 .filter(node -> doesNotHavePermission(node, "android:permission"))
-                .forEach(node -> addIssue(Severity.WARNING, ".NO_PERMISSION", getModel(node), null, null));
+                .forEach(node -> {
+                    String componentName = node.getAttributes().getNamedItem("android:name").getNodeValue();
+                    String canonicalName = context.getPackageName() + componentName;
+                    if (isIntentDataBeingUsedInsideComponent(context, canonicalName)) {
+                        addIssue(Severity.WARNING, ".NO_PERMISSION.DATA_USAGE", getModel(node), context.getManifest().getFile(), null, null);
+                    } else {
+                        addIssue(Severity.WARNING, ".NO_PERMISSION", getModel(node), context.getManifest().getFile(), null, null);
+                    }
+                });
+    }
+
+    private boolean isIntentDataBeingUsedInsideComponent(Context context, String componentCanonicalName) {
+        return context.getJavaSources().stream()
+                .filter(java -> packageNameMatcher.doesFileMatchPackageName(java.getFile(), componentCanonicalName))
+                .flatMap(java -> java.getModel().findAll(MethodCallExpr.class).stream())
+                .filter(expr -> expr.getName().getIdentifier().equals("getIntent"))
+                .anyMatch(expr -> expr.getArguments().isEmpty());
     }
 
     private Map<String, String> getModel(Node node) {
@@ -45,13 +65,13 @@ public class ExportedComponentsPlugin extends AndroidManifestPlugin {
         );
     }
 
-    private void findExportedProviders(Document xml) {
-        NodeList exportedProviders = (NodeList) xPath(xml, "/manifest/application/provider", XPathConstants.NODESET);
-        stream(exportedProviders)
+    private void findExportedProviders(Context context) {
+        NodeList exportedProviders = (NodeList) xmlHelper.xPath(context.getManifest().getModel(), "/manifest/application/provider", XPathConstants.NODESET);
+        xmlHelper.stream(exportedProviders)
                 .filter(this::isExported)
                 .filter(node -> doesNotHavePermission(node, "android:writePermission")
                         || doesNotHavePermission(node, "android:readPermission"))
-                .forEach(node -> addIssue(Severity.WARNING, ".NO_PERMISSION", getModel(node), null, null));
+                .forEach(node -> addIssue(Severity.WARNING, ".NO_PERMISSION", getModel(node), context.getManifest().getFile(), null, null));
     }
 
     private boolean doesNotHavePermission(Node node, String permissionAttribute) {
@@ -67,14 +87,5 @@ public class ExportedComponentsPlugin extends AndroidManifestPlugin {
                 .map(Node::getNodeValue)
                 .map(v -> v.equals("true"))
                 .orElse(false);
-    }
-
-    private String nodeToString(Node node) {
-        String nodeName = Optional.ofNullable(node.getAttributes().getNamedItem("android:name"))
-                .map(Node::getNodeValue)
-                .map(name -> format(" android:name=\"%s\"", name))
-                .orElse("");
-
-        return format("<%s%s ...", node.getNodeName(), nodeName);
     }
 }

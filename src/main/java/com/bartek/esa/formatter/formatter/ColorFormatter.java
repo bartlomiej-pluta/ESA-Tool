@@ -30,12 +30,15 @@ public class ColorFormatter implements Formatter {
     }
 
     @Override
-    public void format(Set<Issue> issues) {
+    public void beforeFormat() {
         AnsiConsole.systemInstall();
+    }
+
+    @Override
+    public String format(Set<Issue> issues) {
         if (issues.isEmpty()) {
             Ansi noIssuesFound = ansi().fg(GREEN).a("No issues found.").reset();
-            System.out.println(noIssuesFound);
-            return;
+            return noIssuesFound.toString();
         }
 
         String format = issues.stream()
@@ -43,8 +46,11 @@ public class ColorFormatter implements Formatter {
                 .map(this::format)
                 .collect(Collectors.joining());
 
-        System.out.println(format.substring(0, format.length() - 2));
-        System.out.println(printSummary(issues));
+        return String.format("%s\n%s", format.substring(0, format.length() - 2), printSummary(issues));
+    }
+
+    @Override
+    public void afterFormat() {
         AnsiConsole.systemUninstall();
     }
 

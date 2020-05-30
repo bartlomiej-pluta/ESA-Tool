@@ -1,6 +1,7 @@
 package com.bartek.esa.analyser.apk;
 
 import com.bartek.esa.analyser.core.Analyser;
+import com.bartek.esa.context.constructor.ContextConstructor;
 import com.bartek.esa.core.archetype.Plugin;
 import com.bartek.esa.core.executor.PluginExecutor;
 import com.bartek.esa.decompiler.archetype.Decompiler;
@@ -19,8 +20,8 @@ public class ApkAnalyser extends Analyser {
     private final FileCleaner fileCleaner;
     private final GlobMatcher globMatcher;
 
-    public ApkAnalyser(PluginExecutor pluginExecutor, Set<Plugin> plugins, FileProvider fileProvider, Decompiler decompiler, FileCleaner fileCleaner, GlobMatcher globMatcher) {
-        super(pluginExecutor, plugins, fileProvider);
+    public ApkAnalyser(PluginExecutor pluginExecutor, Set<Plugin> plugins, FileProvider fileProvider, Decompiler decompiler, FileCleaner fileCleaner, GlobMatcher globMatcher, ContextConstructor contextConstructor) {
+        super(pluginExecutor, plugins, fileProvider, contextConstructor);
         this.decompiler = decompiler;
         this.fileCleaner = fileCleaner;
         this.globMatcher = globMatcher;

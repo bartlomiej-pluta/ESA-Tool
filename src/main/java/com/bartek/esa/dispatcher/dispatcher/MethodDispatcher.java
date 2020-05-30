@@ -1,6 +1,6 @@
 package com.bartek.esa.dispatcher.dispatcher;
 
-import com.bartek.esa.cli.model.CliArgsOptions;
+import com.bartek.esa.cli.model.object.CliArgsOptions;
 import com.bartek.esa.core.model.object.Issue;
 import com.bartek.esa.dispatcher.model.DispatcherActions;
 

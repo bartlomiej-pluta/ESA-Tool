@@ -20,10 +20,14 @@ public class SimpleFormatter implements Formatter {
     }
 
     @Override
-    public void format(Set<Issue> issues) {
+    public void beforeFormat() {
+        // nothing to do
+    }
+
+    @Override
+    public String format(Set<Issue> issues) {
         if (issues.isEmpty()) {
-            System.out.println("No issues found.");
-            return;
+            return "No issues found.";
         }
 
         String format = issues.stream()
@@ -31,8 +35,12 @@ public class SimpleFormatter implements Formatter {
                 .map(this::format)
                 .collect(Collectors.joining());
 
-        System.out.println(format.substring(0, format.length() - 2));
-        System.out.println(printSummary(issues));
+        return String.format("%s\n%s", format.substring(0, format.length() - 2), printSummary(issues));
+    }
+
+    @Override
+    public void afterFormat() {
+        // nothing to do
     }
 
     private String format(Issue issue) {

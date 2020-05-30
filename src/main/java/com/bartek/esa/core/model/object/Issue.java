@@ -23,7 +23,6 @@ public class Issue implements Comparable {
     public int compareTo(Object o) {
         Issue another = (Issue) o;
         int compByFile = file.compareTo(another.file);
-
         if(compByFile != 0) {
             return compByFile;
         }

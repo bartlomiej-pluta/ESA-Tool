@@ -20,6 +20,12 @@ public class StaticScopeHelper {
 
     public Predicate<MethodCallExpr> isFromScope(CompilationUnit compilationUnit, String methodName, String scope, String importScope) {
         return expr -> {
+            if(!expr.getName().getIdentifier().matches(methodName)) {
+                return false;
+            }
+
+            // is called with scope
+            // Class.method()
             boolean isFromScope =  expr.getScope()
                     .filter(Expression::isNameExpr)
                     .map(Expression::asNameExpr)
@@ -28,6 +34,9 @@ public class StaticScopeHelper {
                     .map(s -> s.equals(scope))
                     .orElse(false);
 
+            // is from static import
+            // import static a.b.Class.method
+            // method()
             if(!isFromScope) {
                 isFromScope = compilationUnit.findAll(ImportDeclaration.class).stream()
                         .filter(ImportDeclaration::isStatic)
@@ -39,6 +48,9 @@ public class StaticScopeHelper {
                         .anyMatch(q -> q.equals(format("%s.%s", importScope, scope)));
             }
 
+            // is from import
+            // import static a.b.Class.*
+            // method()
             if(!isFromScope) {
                 isFromScope = compilationUnit.findAll(ImportDeclaration.class).stream()
                         .filter(ImportDeclaration::isStatic)

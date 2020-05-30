@@ -1,9 +1,9 @@
 package com.bartek.esa.core.plugin;
 
+import com.bartek.esa.context.model.Source;
 import com.bartek.esa.core.archetype.ResourceLayoutPlugin;
 import com.bartek.esa.core.model.enumeration.Severity;
 import com.bartek.esa.core.xml.XmlHelper;
-import com.bartek.esa.file.matcher.GlobMatcher;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -12,18 +12,19 @@ import javax.inject.Inject;
 import java.util.Optional;
 
 public class TextInputValidationPlugin extends ResourceLayoutPlugin {
+    private final XmlHelper xmlHelper;
 
     @Inject
-    public TextInputValidationPlugin(GlobMatcher globMatcher, XmlHelper xmlHelper) {
-        super(globMatcher, xmlHelper);
+    public TextInputValidationPlugin(XmlHelper xmlHelper) {
+        this.xmlHelper = xmlHelper;
     }
 
     @Override
-    protected void run(Document xml) {
-        NodeList editTextNodes = xml.getElementsByTagName("EditText");
-        stream(editTextNodes)
+    protected void run(Source<Document> layout) {
+        NodeList editTextNodes = layout.getModel().getElementsByTagName("EditText");
+        xmlHelper.stream(editTextNodes)
                 .filter(this::doesNotHaveInputType)
-                .forEach(n -> addIssue(Severity.WARNING, null, tagString(n)));
+                .forEach(n -> addXmlIssue(Severity.WARNING, layout.getFile(), n));
     }
 
     private boolean doesNotHaveInputType(Node editText) {

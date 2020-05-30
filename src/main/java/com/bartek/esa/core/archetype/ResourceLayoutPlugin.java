@@ -1,20 +1,15 @@
 package com.bartek.esa.core.archetype;
 
-import com.bartek.esa.core.xml.XmlHelper;
-import com.bartek.esa.file.matcher.GlobMatcher;
+import com.bartek.esa.context.model.Context;
+import com.bartek.esa.context.model.Source;
+import org.w3c.dom.Document;
 
-import java.io.File;
-
-public abstract class ResourceLayoutPlugin extends XmlPlugin {
-    private final GlobMatcher globMatcher;
-
-    public ResourceLayoutPlugin(GlobMatcher globMatcher, XmlHelper xmlHelper) {
-        super(globMatcher, xmlHelper);
-        this.globMatcher = globMatcher;
-    }
+public abstract class ResourceLayoutPlugin extends BasePlugin {
 
     @Override
-    public boolean supports(File file) {
-        return globMatcher.fileMatchesGlobPattern(file, "**/res/layout*/*.xml");
+    protected void run(Context context) {
+        context.getLayouts().forEach(this::run);
     }
+
+    protected abstract void run(Source<Document> layout);
 }

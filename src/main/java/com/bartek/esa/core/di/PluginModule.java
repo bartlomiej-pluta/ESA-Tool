@@ -3,10 +3,11 @@ package com.bartek.esa.core.di;
 import com.bartek.esa.core.archetype.Plugin;
 import com.bartek.esa.core.helper.ParentNodeFinder;
 import com.bartek.esa.core.helper.StaticScopeHelper;
+import com.bartek.esa.core.helper.StringConcatenationChecker;
 import com.bartek.esa.core.java.JavaSyntaxRegexProvider;
 import com.bartek.esa.core.plugin.*;
 import com.bartek.esa.core.xml.XmlHelper;
-import com.bartek.esa.file.matcher.GlobMatcher;
+import com.bartek.esa.file.matcher.PackageNameMatcher;
 import dagger.Module;
 import dagger.Provides;
 import dagger.multibindings.ElementsIntoSet;
@@ -26,127 +27,127 @@ public class PluginModule {
 
     @Provides
     @IntoSet
-    public Plugin loggingPlugin(GlobMatcher globMatcher, XmlHelper xmlHelper, StaticScopeHelper staticScopeHelper) {
-        return new LoggingPlugin(globMatcher, xmlHelper, staticScopeHelper);
+    public Plugin loggingPlugin(StaticScopeHelper staticScopeHelper, StringConcatenationChecker stringConcatenationChecker) {
+        return new LoggingPlugin(staticScopeHelper, stringConcatenationChecker);
     }
 
     @Provides
     @IntoSet
-    public Plugin debuggablePlugin(GlobMatcher globMatcher, XmlHelper xmlHelper) {
-        return new DebuggablePlugin(globMatcher, xmlHelper);
+    public Plugin debuggablePlugin(XmlHelper xmlHelper) {
+        return new DebuggablePlugin(xmlHelper);
     }
 
     @Provides
     @IntoSet
-    public Plugin allowBackupPlugin(GlobMatcher globMatcher, XmlHelper xmlHelper) {
-        return new AllowBackupPlugin(globMatcher, xmlHelper);
+    public Plugin allowBackupPlugin(XmlHelper xmlHelper) {
+        return new AllowBackupPlugin(xmlHelper);
     }
 
     @Provides
     @IntoSet
-    public Plugin permissionRaceConditionPlugin(GlobMatcher globMatcher, XmlHelper xmlHelper) {
-        return new PermissionsRaceConditionPlugin(globMatcher, xmlHelper);
+    public Plugin permissionRaceConditionPlugin(XmlHelper xmlHelper) {
+        return new PermissionsRaceConditionPlugin(xmlHelper);
     }
 
     @Provides
     @IntoSet
-    public Plugin secureRandomPlugin(GlobMatcher globMatcher, XmlHelper xmlHelper) {
-        return new SecureRandomPlugin(globMatcher, xmlHelper);
+    public Plugin secureRandomPlugin() {
+        return new SecureRandomPlugin();
     }
 
     @Provides
     @IntoSet
-    public Plugin implicitIntentsPlugin(GlobMatcher globMatcher, XmlHelper xmlHelper, JavaSyntaxRegexProvider javaSyntaxRegexProvider) {
-        return new ImplicitIntentsPlugin(globMatcher, xmlHelper, javaSyntaxRegexProvider);
+    public Plugin implicitIntentsPlugin(JavaSyntaxRegexProvider javaSyntaxRegexProvider) {
+        return new ImplicitIntentsPlugin(javaSyntaxRegexProvider);
     }
 
     @Provides
     @IntoSet
-    public Plugin sharedUidPlugin(GlobMatcher globMatcher, XmlHelper xmlHelper) {
-        return new SharedUidPlugin(globMatcher, xmlHelper);
+    public Plugin sharedUidPlugin(XmlHelper xmlHelper) {
+        return new SharedUidPlugin(xmlHelper);
     }
 
     @Provides
     @IntoSet
-    public Plugin usesSdkPlugin(GlobMatcher globMatcher, XmlHelper xmlHelper) {
-        return new UsesSdkPlugin(globMatcher, xmlHelper);
+    public Plugin usesSdkPlugin(XmlHelper xmlHelper) {
+        return new UsesSdkPlugin(xmlHelper);
     }
 
     @Provides
     @IntoSet
-    public Plugin cipherInstancePlugin(GlobMatcher globMatcher, XmlHelper xmlHelper, StaticScopeHelper staticScopeHelper) {
-        return new CipherInstancePlugin(globMatcher, xmlHelper, staticScopeHelper);
+    public Plugin cipherInstancePlugin(StaticScopeHelper staticScopeHelper) {
+        return new CipherInstancePlugin(staticScopeHelper);
     }
 
     @Provides
     @IntoSet
-    public Plugin strictModePlugin(GlobMatcher globMatcher, XmlHelper xmlHelper, StaticScopeHelper staticScopeHelper) {
-        return new StrictModePlugin(globMatcher, xmlHelper, staticScopeHelper);
+    public Plugin strictModePlugin(StaticScopeHelper staticScopeHelper) {
+        return new StrictModePlugin(staticScopeHelper);
     }
 
     @Provides
     @IntoSet
-    public Plugin externalStoragePlugin(GlobMatcher globMatcher, XmlHelper xmlHelper, ParentNodeFinder parentNodeFinder) {
-        return new ExternalStoragePlugin(globMatcher, xmlHelper, parentNodeFinder);
+    public Plugin externalStoragePlugin(ParentNodeFinder parentNodeFinder, StaticScopeHelper staticScopeHelper) {
+        return new ExternalStoragePlugin(parentNodeFinder, staticScopeHelper);
     }
 
     @Provides
     @IntoSet
-    public Plugin suppressWarningsPlugin(GlobMatcher globMatcher, XmlHelper xmlHelper) {
-        return new SuppressWarningsPlugin(globMatcher, xmlHelper);
+    public Plugin suppressWarningsPlugin() {
+        return new SuppressWarningsPlugin();
     }
 
     @Provides
     @IntoSet
-    public Plugin exportedComponentsPlugin(GlobMatcher globMatcher, XmlHelper xmlHelper) {
-        return new ExportedComponentsPlugin(globMatcher, xmlHelper);
+    public Plugin exportedComponentsPlugin(XmlHelper xmlHelper, PackageNameMatcher packageNameMatcher) {
+        return new ExportedComponentsPlugin(xmlHelper, packageNameMatcher);
     }
 
     @Provides
     @IntoSet
-    public Plugin dangerousPermissionPlugin(GlobMatcher globMatcher, XmlHelper xmlHelper) {
-        return new DangerousPermissionPlugin(globMatcher, xmlHelper);
+    public Plugin dangerousPermissionPlugin(XmlHelper xmlHelper) {
+        return new DangerousPermissionPlugin(xmlHelper);
     }
 
     @Provides
     @IntoSet
-    public Plugin textInputValidationPlugin(GlobMatcher globMatcher, XmlHelper xmlHelper) {
-        return new TextInputValidationPlugin(globMatcher, xmlHelper);
+    public Plugin textInputValidationPlugin(XmlHelper xmlHelper) {
+        return new TextInputValidationPlugin(xmlHelper);
     }
 
     @Provides
     @IntoSet
-    public Plugin intentFilterPlugin(GlobMatcher globMatcher, XmlHelper xmlHelper) {
-        return new IntentFilterPlugin(globMatcher, xmlHelper);
+    public Plugin intentFilterPlugin(XmlHelper xmlHelper, PackageNameMatcher packageNameMatcher) {
+        return new IntentFilterPlugin(xmlHelper, packageNameMatcher);
     }
 
     @Provides
     @IntoSet
-    public Plugin sqlInjectionPlugin(GlobMatcher globMatcher, XmlHelper xmlHelper) {
-        return new SqlInjectionPlugin(globMatcher, xmlHelper);
+    public Plugin sqlInjectionPlugin(StringConcatenationChecker stringConcatenationChecker) {
+        return new SqlInjectionPlugin( stringConcatenationChecker);
     }
 
     @Provides
     @IntoSet
-    public Plugin worldAccessPermissionsPlugin(GlobMatcher globMatcher, XmlHelper xmlHelper) {
-        return new WorldAccessPermissionsPlugin(globMatcher, xmlHelper);
+    public Plugin worldAccessPermissionsPlugin() {
+        return new WorldAccessPermissionsPlugin();
     }
 
     @Provides
     @IntoSet
-    public Plugin orderedAndStickyBroadcastPlugin(GlobMatcher globMatcher, XmlHelper xmlHelper) {
-        return new OrderedBroadcastPlugin(globMatcher, xmlHelper);
+    public Plugin orderedAndStickyBroadcastPlugin() {
+        return new OrderedBroadcastPlugin();
     }
 
     @Provides
     @IntoSet
-    public Plugin webViewPlugin(GlobMatcher globMatcher, XmlHelper xmlHelper) {
-        return new WebViewPlugin(globMatcher, xmlHelper);
+    public Plugin webViewPlugin() {
+        return new WebViewPlugin();
     }
 
     @Provides
     @IntoSet
-    public Plugin telephonyManagerPlugin(GlobMatcher globMatcher, XmlHelper xmlHelper) {
-        return new TelephonyManagerPlugin(globMatcher, xmlHelper);
+    public Plugin telephonyManagerPlugin() {
+        return new TelephonyManagerPlugin();
     }
 }

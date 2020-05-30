@@ -3,6 +3,7 @@ package com.bartek.esa.di;
 import com.bartek.esa.EsaMain;
 import com.bartek.esa.analyser.di.AnalyserModule;
 import com.bartek.esa.cli.di.CliModule;
+import com.bartek.esa.context.di.ContextModule;
 import com.bartek.esa.core.di.CoreModule;
 import com.bartek.esa.core.di.PluginModule;
 import com.bartek.esa.decompiler.di.DecompilerModule;
@@ -19,7 +20,8 @@ import dagger.Component;
         CoreModule.class,
         PluginModule.class,
         AnalyserModule.class,
-        FormatterModule.class
+        FormatterModule.class,
+        ContextModule.class
 })
 public interface DependencyInjector {
     EsaMain esa();

@@ -1,10 +1,9 @@
 package com.bartek.esa.core.plugin;
 
+import com.bartek.esa.context.model.Source;
 import com.bartek.esa.core.archetype.JavaPlugin;
 import com.bartek.esa.core.helper.StaticScopeHelper;
 import com.bartek.esa.core.model.enumeration.Severity;
-import com.bartek.esa.core.xml.XmlHelper;
-import com.bartek.esa.file.matcher.GlobMatcher;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.expr.MethodCallExpr;
 
@@ -14,16 +13,15 @@ public class StrictModePlugin extends JavaPlugin {
     private final StaticScopeHelper staticScopeHelper;
 
     @Inject
-    public StrictModePlugin(GlobMatcher globMatcher, XmlHelper xmlHelper, StaticScopeHelper staticScopeHelper) {
-        super(globMatcher, xmlHelper);
+    public StrictModePlugin(StaticScopeHelper staticScopeHelper) {
         this.staticScopeHelper = staticScopeHelper;
     }
 
     @Override
-    public void run(CompilationUnit compilationUnit) {
-        compilationUnit.findAll(MethodCallExpr.class).stream()
+    public void run(Source<CompilationUnit> java) {
+        java.getModel().findAll(MethodCallExpr.class).stream()
                 .filter(expr -> expr.getName().getIdentifier().equals("setThreadPolicy"))
-                .filter(staticScopeHelper.isFromScope(compilationUnit, "setThreadPolicy", "StrictMode", "android.os"))
-                .forEach(expr -> addIssue(Severity.WARNING, getLineNumberFromExpression(expr), expr.toString()));
+                .filter(staticScopeHelper.isFromScope(java.getModel(), "setThreadPolicy", "StrictMode", "android.os"))
+                .forEach(expr -> addJavaIssue(Severity.WARNING, java.getFile(), expr));
     }
 }
