@@ -6,7 +6,7 @@ plugins {
 group 'com.bartek'
 version '1.0-SNAPSHOT'
 
-sourceCompatibility = 1.12
+sourceCompatibility = 1.11
 
 repositories {
     mavenCentral()
